@@ -15,12 +15,6 @@
 
     <name>SOCIETY</name>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.1.8.RELEASE</version>
-    </parent>
-
     <developers>
         <developer>
             <id>GOP</id>

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 /**
  * @author GhostOfPQ
  */
-@Component
+@Component("personRepository")
 @Repository
 public interface PersonRepository extends PagingAndSortingRepository<Person, String> {
 }
