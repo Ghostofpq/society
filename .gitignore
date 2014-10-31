@@ -1,5 +1,4 @@
-.idea/
-**/*.iml
-**/target
+.idea
+*.iml
 society-portal/target
 society-business/target
