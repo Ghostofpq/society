@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:context="http://www.springframework.org/schema/context"
+             xmlns:security="http://www.springframework.org/schema/security"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans.xsd
+          http://www.springframework.org/schema/security
+          http://www.springframework.org/schema/security/spring-security.xsd
+          http://www.springframework.org/schema/context
+          http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+    <context:property-placeholder location="classpath:application.properties"/>
+
+    <beans:bean id="authEntryPoint403"
+                class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+
+
+    <!-- API urls -->
+    <http pattern="/api/**" entry-point-ref="authEntryPoint403">
+    </http>
+
+    <!-- 403 exception on partials -->
+    <http pattern="/portal/partials/**" entry-point-ref="authEntryPoint403">
+        <intercept-url pattern="/**" access="ROLE_USER"/>
+    </http>
+
+    <!-- access to login.html -->
+    <http auto-config='true' pattern="/portal/login.html" security="none"></http>
+
+    <http auto-config='true' pattern="/**">
+        <intercept-url pattern="/portal/*" access="ROLE_USER"/>
+        <intercept-url pattern="/portal/partials/**" access="ROLE_USER"/>
+        <intercept-url pattern="/portal/**" access="ROLE_ANONYMOUS,ROLE_USER"/>
+
+        <form-login login-processing-url="/session/login"
+                    password-parameter="password"
+                    username-parameter="username"
+                    login-page="/portal/login.html"
+                    authentication-failure-url="/portal/login.html?err=1"
+                    default-target-url="/portal/index.html"
+                    always-use-default-target="true"/>
+        <logout logout-url="/session/logout"
+                invalidate-session="true"
+                delete-cookies="true"
+                logout-success-url="/"/>
+    </http>
+
+
+    <authentication-manager>
+        <security:authentication-provider>
+            <user-service>
+                <user name="bob@bob.bob" password="bob"
+                      authorities="ROLE_USER,ROLE_ADMIN"/>
+                <user name="john@bob.bob" password="john" authorities="ROLE_USER"/>
+            </user-service>
+        </security:authentication-provider>
+    </authentication-manager>
+</beans:beans>
