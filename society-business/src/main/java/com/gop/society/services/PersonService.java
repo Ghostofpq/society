@@ -19,19 +19,24 @@ public class PersonService {
     @Autowired
     private PersonRepository personRepository;
 
-    public Person add(Person person) {
+    public Person add(final Person person) {
         return personRepository.save(person);
     }
 
-    public Person get(String id) {
+    public Person get(final String id) {
         return personRepository.findOne(id);
     }
 
-    public void delete(String id) {
+    public Person update(final String id, final Person person) {
+        person.setId(id);
+        return personRepository.save(person);
+    }
+
+    public void delete(final String id) {
         personRepository.delete(id);
     }
 
-    public Pageable<Person> getAll(int pageNumber, int size) {
+    public Pageable<Person> getAll(final int pageNumber, final int size) {
         final Page<Person> persons = personRepository.findAll(new PageRequest(pageNumber, size));
         return new Pageable<>(
                 persons.getNumber(),
@@ -39,5 +44,4 @@ public class PersonService {
                 persons.getTotalElements(),
                 Lists.newArrayList(persons.iterator()));
     }
-
 }

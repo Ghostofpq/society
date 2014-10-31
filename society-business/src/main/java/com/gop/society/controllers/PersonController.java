@@ -33,6 +33,12 @@ public class PersonController {
         return personService.get(id);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseBody
+    public Person update(@PathVariable("id") final String id, @RequestBody Person person) {
+        return personService.update(id, person);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void delete(@PathVariable("id") final String id) {
