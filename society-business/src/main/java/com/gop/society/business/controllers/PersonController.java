@@ -1,4 +1,4 @@
-package com.gop.society.controllers;
+package com.gop.society.business.controllers;
 
 import com.gop.society.models.Pageable;
 import com.gop.society.models.Person;

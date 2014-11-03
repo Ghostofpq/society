@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans      xmlns="http://www.springframework.org/schema/beans"
+            xmlns:security="http://www.springframework.org/schema/security"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:context="http://www.springframework.org/schema/context"
+            xmlns:mvc="http://www.springframework.org/schema/mvc"
+            xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+            xmlns:util="http://www.springframework.org/schema/util"
+            xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/security
+                http://www.springframework.org/schema/security/spring-security-3.2.xsd
+                http://www.springframework.org/schema/mvc
+                http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                http://www.springframework.org/schema/data/mongo
+                http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
+                http://www.springframework.org/schema/util
+                http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+
+     <mvc:annotation-driven/>
+     <context:component-scan base-package="com.gop.society"/>
+
+     <mongo:db-factory id="mongoDbFactory" dbname="society" host="127.0.0.1:27017"/>
+     <mongo:repositories base-package="com.gop.society.repositories" mongo-template-ref="mongoTemplate"/>
+
+     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+         <constructor-arg ref="mongoDbFactory"/>
+     </bean>
+
+     <!--  <security:http>
+           <security:intercept-url pattern="/api/persons" access="ROLE_USER"/>
+           <security:intercept-url pattern="/api/persons/*" access="ROLE_USER"/>
+           <security:intercept-url pattern="/api/users" access="ROLE_ANONYMOUS,ROLE_USER"/>
+           <security:form-login
+                       login-processing-url="/session/login"
+                       always-use-default-target="true"/>
+           <security:logout
+                   logout-url="/session/logout"
+                   invalidate-session="true"
+                   logout-success-url="/"/>
+       </security:http>
+
+       <security:authentication-manager>
+           <security:authentication-provider ref='authenticationManager'/>
+       </security:authentication-manager>    -->
+</beans>

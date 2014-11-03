@@ -10,6 +10,7 @@
     <modules>
         <module>society-business</module>
         <module>society-portal</module>
+        <module>society-services</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -27,7 +28,7 @@
         <!-- project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.build.java.version>1.8</project.build.java.version>
+        <project.build.java.version>1.7</project.build.java.version>
         <!-- logging -->
         <slf4j.version>1.7.7</slf4j.version>
         <!-- test -->
@@ -43,17 +44,31 @@
 
         <spring.version>4.1.1.RELEASE</spring.version>
         <spring-security.version>3.2.5.RELEASE</spring-security.version>
-        <spring.boot.starter.version>1.1.8.RELEASE</spring.boot.starter.version>
         <spring.data.mongodb.version>1.6.0.RELEASE</spring.data.mongodb.version>
-        <spring.data.rest.version>2.2.0.RELEASE</spring.data.rest.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring.boot.starter.version}</version>
+                <groupId>com.gop.society</groupId>
+                <artifactId>society-services</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
@@ -61,19 +76,8 @@
                 <version>${spring.data.mongodb.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-rest-webmvc</artifactId>
-                <version>${spring.data.rest.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring.version}</version>
-            </dependency>
-            <!-- Spring Security -->
-            <dependency>
                 <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
+                <artifactId>spring-security-web</artifactId>
                 <version>${spring-security.version}</version>
             </dependency>
             <dependency>
@@ -83,9 +87,26 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
+                <artifactId>spring-security-core</artifactId>
                 <version>${spring-security.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>2.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>2.4.3</version>
+            </dependency>
+
             <!-- logging -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -132,6 +153,16 @@
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>1.9.13</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.json-simple</groupId>
+                <artifactId>json-simple</artifactId>
+                <version>1.1.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -146,8 +177,8 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <source>1.7</source>
+                        <target>1.7</target>
                     </configuration>
                 </plugin>
                 <plugin>
