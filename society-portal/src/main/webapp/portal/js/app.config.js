@@ -3,7 +3,6 @@
 app
     // error 403 => reload
 	.config(function($httpProvider){
-
 		// setting interceptor on http errors :
 		$httpProvider.interceptors.push(function($q) {
 			return {
@@ -37,8 +36,6 @@ app
 
 	// societyBusiness
 	.config(function($societyBusiness) {
-		$iaeNetOpProvider.baseUrl("../api/society");
+		$societyBusiness.baseUrl("localhost:1338/api/");
 	});
-
-
 

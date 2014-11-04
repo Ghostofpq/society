@@ -1,9 +1,9 @@
 package com.gop.society.portal;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import com.gop.society.models.User;
+import com.gop.society.utils.UserAuthenticationToken;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.ServletException;
@@ -18,26 +18,17 @@ public class UserServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        JSONObject res = new JSONObject();
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final ObjectMapper mapper = new ObjectMapper();
         if (authentication == null || !authentication.isAuthenticated()) {
             // NOT authenticated
-            res.put("authenticated", false);
+            resp.getWriter().write(mapper.writeValueAsString(null));
         } else {
-            // authenticated!
-            res.put("authenticated", true);
-            res.put("login", authentication.getName());
-
-            // roles
-            JSONArray roles = new JSONArray();
-            for (GrantedAuthority auth : authentication.getAuthorities()) {
-                roles.add(auth.toString());
-            }
-            res.put("roles", roles);
+            // authenticated, returning the user desc
+            final UserAuthenticationToken token = (UserAuthenticationToken) authentication.getPrincipal();
+            final User user = (User) token.getPrincipal();
+            // Write the response
+            resp.getWriter().write(mapper.writeValueAsString(user));
         }
-
-        // write response
-        resp.getWriter().write(res.toJSONString());
     }
 }

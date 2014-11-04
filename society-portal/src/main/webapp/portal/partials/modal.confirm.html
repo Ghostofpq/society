@@ -1,0 +1,10 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{title}}</h3>
+</div>
+<div class="modal-body row">
+    <p class="col-md-12">{{content|default:'Do you confirm you want to '+title+'?'}}</p>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-primary" ng-click="yes()">Yes</button>
+    <button class="btn btn-default" ng-click="no()">No</button>
+</div>

@@ -5,11 +5,11 @@
              xmlns:context="http://www.springframework.org/schema/context"
              xmlns:mongo="http://www.springframework.org/schema/data/mongo"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+            http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/security
-            http://www.springframework.org/schema/security/spring-security-3.0.3.xsd
+            http://www.springframework.org/schema/security/spring-security.xsd
             http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context-3.2.xsd
+            http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/data/mongo
             http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
@@ -38,7 +38,7 @@
     </http>
 
     <!-- access to login.html -->
-    <http auto-config='true' pattern="/portal/login.html" security="none"></http>
+    <http auto-config='true' pattern="/portal/login.html" security="none"/>
 
     <http auto-config='true' pattern="/**">
         <intercept-url pattern="/portal/*" access="ROLE_USER"/>
@@ -60,13 +60,6 @@
 
 
     <authentication-manager>
-        <authentication-provider ref='authenticationManager'/>
-        <!--<security:authentication-provider>                                            -->
-        <!--    <user-service>                                                            -->
-        <!--        <user name="bob@bob.bob" password="bob"                               -->
-        <!--              authorities="ROLE_USER,ROLE_ADMIN"/>                            -->
-        <!--        <user name="john@bob.bob" password="john" authorities="ROLE_USER"/>   -->
-        <!--    </user-service>                                                           -->
-        <!--</security:authentication-provider>                                           -->
+        <authentication-provider ref='authenticationManager'/>                                   -->
     </authentication-manager>
 </beans:beans>
