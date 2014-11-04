@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
+
 
 /**
  * @author GhostOfPQ
@@ -20,6 +22,11 @@ import org.springframework.web.bind.annotation.*;
 public class PersonController {
     @Autowired
     private PersonService personService;
+
+    @PostConstruct
+    private void init(){
+        log.info("PersonController started !");
+    }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody

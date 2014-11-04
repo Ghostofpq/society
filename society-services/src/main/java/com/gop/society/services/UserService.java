@@ -1,6 +1,9 @@
 package com.gop.society.services;
 
 import com.google.common.collect.Lists;
+import com.gop.society.exceptions.CustomNotFoundException;
+import com.gop.society.exceptions.CustomUserNotFoundForIdException;
+import com.gop.society.exceptions.CustomUserNotFoundForLoginException;
 import com.gop.society.models.Pageable;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
@@ -24,6 +27,7 @@ public class UserService {
     private UserRepository userRepository;
 
     private MessageDigest md;
+
     @PostConstruct
     private void setUpEncoder() throws NoSuchAlgorithmException {
         // Create MessageDigest instance for MD5
@@ -50,21 +54,37 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User get(final String id) {
-        return userRepository.findOne(id);
+    public User get(final String id) throws CustomNotFoundException {
+        final User user = userRepository.findOne(id);
+        if (user != null) {
+            return user;
+        }
+        throw new CustomUserNotFoundForIdException(id);
     }
 
-    public User getByLogin(final String login) {
-        return userRepository.findByLogin(login);
+    public User getByLogin(final String login) throws CustomNotFoundException {
+        final User user = userRepository.findByLogin(login);
+        if (user != null) {
+            return user;
+        }
+        throw new CustomUserNotFoundForLoginException(login);
     }
 
-    public User update(final String id, final User user) {
-        user.setId(id);
-        return userRepository.save(user);
+    public User update(final String id, final User updateUser) throws CustomNotFoundException {
+        final User user = userRepository.findOne(id);
+        if (user != null) {
+            updateUser.setId(id);
+            return userRepository.save(user);
+        }
+        throw new CustomUserNotFoundForIdException(id);
     }
 
-    public void delete(final String id) {
-        userRepository.delete(id);
+    public void delete(final String id) throws CustomNotFoundException {
+        final User user = userRepository.findOne(id);
+        if (user != null) {
+            userRepository.delete(id);
+        }
+        throw new CustomUserNotFoundForIdException(id);
     }
 
     public Pageable<User> getAll(final int pageNumber, final int size) {
