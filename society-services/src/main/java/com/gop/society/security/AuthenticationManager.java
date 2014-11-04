@@ -4,6 +4,7 @@ import com.gop.society.exceptions.CustomInvalidLoginOrPasswordException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
 import com.gop.society.services.UserService;
+import com.gop.society.utils.UserAuthenticationToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -43,6 +44,7 @@ public class AuthenticationManager implements AuthenticationProvider {
         try {
             user = userService.getByLogin(login);
         } catch (CustomNotFoundException e) {
+            log.error("Invalid login or Password");
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
 
@@ -52,14 +54,16 @@ public class AuthenticationManager implements AuthenticationProvider {
             for (String role : user.getUserRole()) {
                 grantedAuths.add(new SimpleGrantedAuthority(role));
             }
-            return new UsernamePasswordAuthenticationToken(login, encodedPassword, grantedAuths);
+            return new UserAuthenticationToken(user, grantedAuths);
         } else {
+            log.error("Invalid login or Password");
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
+        log.debug("supports");
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 }

@@ -1,4 +1,4 @@
-package com.gop.society.models;
+package com.gop.society.utils;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

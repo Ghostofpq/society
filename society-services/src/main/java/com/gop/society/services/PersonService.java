@@ -1,7 +1,7 @@
 package com.gop.society.services;
 
 import com.google.common.collect.Lists;
-import com.gop.society.models.Pageable;
+import com.gop.society.utils.Pageable;
 import com.gop.society.models.Person;
 import com.gop.society.repositories.PersonRepository;
 import lombok.extern.slf4j.Slf4j;

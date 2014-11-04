@@ -1,6 +1,6 @@
 package com.gop.society.business.controllers;
 
-import com.gop.society.models.Pageable;
+import com.gop.society.utils.Pageable;
 import com.gop.society.models.Person;
 import com.gop.society.services.PersonService;
 import lombok.extern.slf4j.Slf4j;

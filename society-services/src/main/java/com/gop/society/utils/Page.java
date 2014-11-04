@@ -1,4 +1,4 @@
-package com.gop.society.models;
+package com.gop.society.utils;
 
 import lombok.Getter;
 import lombok.Setter;
