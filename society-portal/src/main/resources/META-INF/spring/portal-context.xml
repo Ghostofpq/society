@@ -3,15 +3,12 @@
              xmlns:beans="http://www.springframework.org/schema/beans"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xmlns:context="http://www.springframework.org/schema/context"
-             xmlns:mongo="http://www.springframework.org/schema/data/mongo"
              xsi:schemaLocation="http://www.springframework.org/schema/beans
             http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.springframework.org/schema/security
             http://www.springframework.org/schema/security/spring-security.xsd
             http://www.springframework.org/schema/context
-            http://www.springframework.org/schema/context/spring-context.xsd
-            http://www.springframework.org/schema/data/mongo
-            http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
+            http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:property-placeholder location="classpath:portal.properties"/>
     <context:annotation-config/>
@@ -19,15 +16,7 @@
     <beans:bean id="authEntryPoint403"
                 class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
-    <mongo:db-factory id="mongoDbFactory" dbname="society" host="127.0.0.1:27017"/>
-    <mongo:repositories base-package="com.gop.society.repositories" mongo-template-ref="mongoTemplate"/>
-
-    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-        <constructor-arg ref="mongoDbFactory"/>
-        <constructor-arg ref="converter"/>
-    </bean>
-
-
+    <beans:import resource="classpath:META-INF/spring/mongo-context.xml"/>
     <!-- API urls -->
     <http pattern="/api/**" entry-point-ref="authEntryPoint403">
     </http>
@@ -60,6 +49,6 @@
 
 
     <authentication-manager>
-        <authentication-provider ref='authenticationManager'/>                                   -->
+        <authentication-provider ref='authenticationManager'/>
     </authentication-manager>
 </beans:beans>

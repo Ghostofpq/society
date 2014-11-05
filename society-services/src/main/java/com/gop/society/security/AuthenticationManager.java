@@ -38,7 +38,6 @@ public class AuthenticationManager implements AuthenticationProvider {
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         final String login = authentication.getName();
-        final String password = authentication.getCredentials().toString();
         final User user;
 
         try {
@@ -48,8 +47,7 @@ public class AuthenticationManager implements AuthenticationProvider {
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
 
-        String encodedPassword = userService.encodePassword(password);
-        if (encodedPassword.equals(user.getPassword())) {
+        if (userService.authenticate(user.getPassword(),authentication.getCredentials().toString(),user.getSalt())) {
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             for (String role : user.getUserRole()) {
                 grantedAuths.add(new SimpleGrantedAuthority(role));

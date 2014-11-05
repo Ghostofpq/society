@@ -1,7 +1,7 @@
 package com.gop.society.portal;
 
 import com.gop.society.models.User;
-import com.gop.society.utils.UserAuthenticationToken;
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 public class UserServlet extends HttpServlet {
 
     private static final long serialVersionUID = 97171654661L;
@@ -24,11 +25,15 @@ public class UserServlet extends HttpServlet {
             // NOT authenticated
             resp.getWriter().write(mapper.writeValueAsString(null));
         } else {
-            // authenticated, returning the user desc
-            final UserAuthenticationToken token = (UserAuthenticationToken) authentication.getPrincipal();
-            final User user = (User) token.getPrincipal();
-            // Write the response
-            resp.getWriter().write(mapper.writeValueAsString(user));
+            if (authentication.getPrincipal() instanceof User) {
+                // authenticated, returning the user desc
+                final User user = (User) authentication.getPrincipal();
+                // Write the response
+                resp.getWriter().write(mapper.writeValueAsString(user));
+            } else {
+                authentication.setAuthenticated(false);
+                resp.getWriter().write(mapper.writeValueAsString(null));
+            }
         }
     }
 }

@@ -1,9 +1,7 @@
 'use strict';
 
-angular
-	.module('authentication', [])
-
-		// Version number
+angular.module('authentication', [])
+        // Version number
 		.value('version', '0.1')
 
 		// AuthentificationService

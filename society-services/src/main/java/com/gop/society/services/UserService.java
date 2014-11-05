@@ -13,12 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author GhostOfPQ
@@ -29,35 +31,22 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private MessageDigest md;
-    private EmailValidator ev;
+    private ShaPasswordEncoder passwordEncoder;
+    private EmailValidator emailValidator;
 
     @PostConstruct
-    private void setUpEncoder() throws NoSuchAlgorithmException {
+    private void init() throws NoSuchAlgorithmException {
         // Create MessageDigest instance for MD5
-        md = MessageDigest.getInstance("MD5");
-        ev = new EmailValidator();
+        passwordEncoder = new ShaPasswordEncoder(256);
+        emailValidator = new EmailValidator();
     }
 
-    public String encodePassword(final String password) {
-        //Add password bytes to digest
-        md.update(password.getBytes());
-        //Get the hash's bytes
-        byte[] bytes = md.digest();
-        //This bytes[] has bytes in decimal format;
-        //Convert it to hexadecimal format
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bytes) {
-            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-        }
-        md.reset();
-        //Get complete hashed password in hex format
-        return sb.toString();
+    public String encodePassword(final String password, final String salt) {
+        return passwordEncoder.encodePassword(password, salt);
     }
 
-    public boolean authenticate(final String id, final String password) throws CustomNotFoundException {
-        final User user = userRepository.findOne(id);
-        return user.getPassword().equals(password);
+    public boolean authenticate(final String encPassword, final String password, final String salt) {
+        return passwordEncoder.isPasswordValid(encPassword, password, salt);
     }
 
     public User add(final User user) {
@@ -94,7 +83,13 @@ public class UserService {
             throws CustomNotFoundException, CustomInvalidFieldException {
         final User user = get(id);
         if (passwordIsValid(newPassword)) {
-            user.setPassword(encodePassword(newPassword));
+            // Generate Salt
+            final Random r = new SecureRandom();
+            byte[] salt = new byte[32];
+            r.nextBytes(salt);
+            // Encode Password
+            user.setSalt(new String(salt));
+            user.setPassword(encodePassword(newPassword, user.getSalt()));
             return userRepository.save(user);
         }
         throw new CustomInvalidFieldException("Password");
@@ -158,7 +153,7 @@ public class UserService {
 
     private boolean emailIsValid(final String email) {
         log.debug("check {}", email);
-        return (email != null && ev.validate(email));
+        return (email != null && emailValidator.validate(email));
     }
 
     private boolean passwordIsValid(final String password) {

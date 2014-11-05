@@ -18,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -42,13 +44,26 @@ public class UserController {
     @ResponseBody
     public User create(@RequestBody final UserCreationRequest userToCreate) {
         log.debug("In create with {}", userToCreate.getLogin());
+
         final User user = new User();
+
+        // Set Login
         user.setLogin(userToCreate.getLogin());
-        user.setPassword(userService.encodePassword(userToCreate.getPassword()));
+        // Set Email
+        user.setEmail(userToCreate.getEmail());
+        // Generate Salt
+        final Random r = new SecureRandom();
+        byte[] salt = new byte[32];
+        r.nextBytes(salt);
+        // Encode Password
+        user.setSalt(new String(salt));
+        user.setPassword(userService.encodePassword(userToCreate.getPassword(),user.getSalt()));
+        // Set basic Role
         final List<String> roles = new ArrayList<>();
         roles.add("ROLE_USER");
         user.setUserRole(roles);
-        user.setEmail(userToCreate.getEmail());
+
+        // Save
         return userService.add(user);
     }
 

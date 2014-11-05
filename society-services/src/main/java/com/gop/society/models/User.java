@@ -27,4 +27,5 @@ public class User {
     @Indexed(unique = true)
     private String email;
     private List<String> userRole;
+    private String salt;
 }
