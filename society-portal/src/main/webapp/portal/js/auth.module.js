@@ -10,6 +10,7 @@ angular.module('authentication', [])
 			return {
 				// get current loggedin User account info
 				update: function() {
+				    console.log("update Auth");
                     return $http.get("../api/user")
                         .success(function(u){
                             user=u;
@@ -21,7 +22,7 @@ angular.module('authentication', [])
 
 				// logout
 				logout: function() {
-					return $http.get("../session/logout")
+					return $http.get("http://localhost:1337/session/logout")
 						.success(function(){
 							location.reload();
 						});

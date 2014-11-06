@@ -9,27 +9,35 @@
     <meta name = "author" content = "GhostOfPQ">
 
     <title>Society</title>
-    <!-- angular.js -->
-    <script src = "lib/angular-1.2.26/angular.min.js"></script>
+    <!-- JQuery -->
+    <script src = "lib/jquery-2.1.1/jquery-2.1.1.min.js"></script>
     <!-- Bootstrap -->
     <link rel = "stylesheet" href = "lib/bootstrap-3.3.0/css/bootstrap.min.css">
     <link rel = "stylesheet" href = "lib/bootstrap-3.3.0/css/bootstrap-theme.min.css">
     <script src = "lib/bootstrap-3.3.0/js/bootstrap.min.js"></script>
-    <!-- JQuery -->
-    <script src = "lib/jquery-2.1.1/jquery-2.1.1.min.js"></script>
 
+    <!-- angular.js -->
+    <script src = "lib/angular-1.2.26/angular.min.js"></script>
+    <script src = "lib/angular-1.2.26/angular-animate.min.js"></script>
+    <script src = "lib/angular-1.2.26/angular-route.min.js"></script>
     <!--Modules-->
     <script src = "js/auth.module.js"></script>
-    <script src = "js/society-business.module.js"></script>
+    <!--  <script src = "js/society-business.module.js"></script>    -->
 
     <script src = "js/app.js"></script>
     <script src = "js/app.config.js"></script>
+    <script src = "js/app.controller.js"></script>
+
+    <script src = "js/controllers/dashboard.controller.js"></script>
     <!-- APP CSS -->
     <link rel = "stylesheet" href = "css/app.css"/>
 </head>
 
 <body id = "ng-app" data-ng-app = "app" ng-controller = "main">
-             OK
+
+    <!-- CONTENT -->
+    <div ng-view id = "content"></div>
+
 </body>
 
 </html>

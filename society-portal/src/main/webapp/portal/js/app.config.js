@@ -35,7 +35,7 @@ app
 	})
 
 	// societyBusiness
-	.config(function($societyBusiness) {
-		$societyBusiness.baseUrl("localhost:1338/api/");
-	});
+// 	.config(function($societyBusiness) {
+// 		$societyBusiness.baseUrl("localhost:1338/api/");
+// 	});
 
