@@ -1,6 +1,6 @@
-package com.gop.society.utils;
+package com.gop.society.security;
 
-import com.gop.society.models.User;
+import com.gop.society.utils.UserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,9 +13,9 @@ import java.util.Collection;
 @Slf4j
 public class UserAuthenticationToken extends AbstractAuthenticationToken {
 
-    private User loggedUser;
+    private UserInfo loggedUser;
 
-    public UserAuthenticationToken(final User user,
+    public UserAuthenticationToken(final UserInfo user,
                                    final Collection<GrantedAuthority> grantedAuthorityCollection) {
         super(grantedAuthorityCollection);
         this.setAuthenticated(true);

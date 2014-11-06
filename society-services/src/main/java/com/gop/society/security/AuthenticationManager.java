@@ -4,7 +4,8 @@ import com.gop.society.exceptions.CustomInvalidLoginOrPasswordException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
 import com.gop.society.services.UserService;
-import com.gop.society.utils.UserAuthenticationToken;
+import com.gop.society.utils.UserInfo;
+import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -43,18 +44,22 @@ public class AuthenticationManager implements AuthenticationProvider {
         try {
             user = userService.getByLogin(login);
         } catch (CustomNotFoundException e) {
-            log.error("Invalid login or Password");
+            log.error("1-Invalid login or Password");
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
 
-        if (userService.authenticate(user.getPassword(),authentication.getCredentials().toString(),user.getSalt())) {
+        if (userService.authenticate(user.getPassword(), authentication.getCredentials().toString(), user.getSalt())) {
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
-            for (String role : user.getUserRole()) {
-                grantedAuths.add(new SimpleGrantedAuthority(role));
+            for (UserRole role : user.getUserRole()) {
+                grantedAuths.add(new SimpleGrantedAuthority(role.toString()));
             }
-            return new UserAuthenticationToken(user, grantedAuths);
+            final UserInfo userInfo = new UserInfo();
+            userInfo.setId(user.getId());
+            userInfo.setLogin(user.getLogin());
+            userInfo.setEmail(user.getEmail());
+            return new UserAuthenticationToken(userInfo, grantedAuths);
         } else {
-            log.error("Invalid login or Password");
+            log.error("2-Invalid login or Password");
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
     }

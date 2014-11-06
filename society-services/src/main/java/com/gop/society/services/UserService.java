@@ -9,6 +9,7 @@ import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.utils.EmailValidator;
 import com.gop.society.utils.Pageable;
+import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -105,7 +106,7 @@ public class UserService {
         throw new CustomInvalidFieldException("Email");
     }
 
-    public User addRole(final String id, final String role)
+    public User addRole(final String id, final UserRole role)
             throws CustomNotFoundException, CustomInvalidFieldException {
         final User user = get(id);
         if (!user.getUserRole().contains(role)) {
@@ -115,7 +116,7 @@ public class UserService {
         throw new CustomInvalidFieldException("Role");
     }
 
-    public User removeRole(final String id, final String role)
+    public User removeRole(final String id, final UserRole role)
             throws CustomNotFoundException, CustomInvalidFieldException {
         final User user = get(id);
         if (user.getUserRole().contains(role)) {
@@ -125,7 +126,7 @@ public class UserService {
         throw new CustomInvalidFieldException("Role");
     }
 
-    public User updateRoles(final String id, final List<String> roles)
+    public User updateRoles(final String id, final List<UserRole> roles)
             throws CustomNotFoundException {
         final User user = get(id);
         user.setUserRole(roles);

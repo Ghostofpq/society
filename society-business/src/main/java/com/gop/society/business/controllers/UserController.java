@@ -4,10 +4,12 @@ import com.gop.society.exceptions.CustomInvalidFieldException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
+import com.gop.society.security.UserAuthenticationToken;
 import com.gop.society.services.UserService;
 import com.gop.society.utils.Pageable;
-import com.gop.society.utils.UserAuthenticationToken;
 import com.gop.society.utils.UserCreationRequest;
+import com.gop.society.utils.UserInfo;
+import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,10 +59,10 @@ public class UserController {
         r.nextBytes(salt);
         // Encode Password
         user.setSalt(new String(salt));
-        user.setPassword(userService.encodePassword(userToCreate.getPassword(),user.getSalt()));
+        user.setPassword(userService.encodePassword(userToCreate.getPassword(), user.getSalt()));
         // Set basic Role
-        final List<String> roles = new ArrayList<>();
-        roles.add("ROLE_USER");
+        final List<UserRole> roles = new ArrayList<>();
+        roles.add(UserRole.USER);
         user.setUserRole(roles);
 
         // Save
@@ -71,11 +73,9 @@ public class UserController {
     @ResponseBody
     public User get(
             @PathVariable("id") final String id,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException, CustomNotAuthorizedException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
             return userService.get(id);
         }
         throw new CustomNotAuthorizedException();
@@ -86,13 +86,11 @@ public class UserController {
     public User updateLogin(
             @PathVariable("id") final String id,
             @RequestBody final String login,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
             return userService.updateLogin(id, login);
         }
         throw new CustomNotAuthorizedException();
@@ -103,13 +101,11 @@ public class UserController {
     public User updatePassword(
             @PathVariable("id") final String id,
             @RequestBody final String newPassword,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
             return userService.updatePassword(id, newPassword);
         }
         throw new CustomNotAuthorizedException();
@@ -121,13 +117,11 @@ public class UserController {
     public User updateEmail(
             @PathVariable("id") final String id,
             @RequestBody final String email,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
             return userService.updateEmail(id, email);
         }
         throw new CustomNotAuthorizedException();
@@ -138,14 +132,18 @@ public class UserController {
     public User updateRoles(
             @PathVariable("id") final String id,
             @RequestBody final List<String> roles,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
-            return userService.updateRoles(id, roles);
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
+            final List<UserRole> userRoles = new ArrayList<>();
+            for (String role : roles) {
+                if (UserRole.fromValue(role) != null) {
+                    userRoles.add(UserRole.fromValue(role));
+                }
+            }
+            return userService.updateRoles(id, userRoles);
         }
         throw new CustomNotAuthorizedException();
     }
@@ -155,14 +153,16 @@ public class UserController {
     public User addRole(
             @PathVariable("id") final String id,
             @RequestBody final String role,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
-            return userService.addRole(id, role);
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
+            final UserRole userRole = UserRole.fromValue(role);
+            if (UserRole.fromValue(role) != null) {
+                return userService.addRole(id, userRole);
+            }
+            throw new CustomInvalidFieldException("role");
         }
         throw new CustomNotAuthorizedException();
     }
@@ -172,14 +172,16 @@ public class UserController {
     public User removeRole(
             @PathVariable("id") final String id,
             @RequestBody final String role,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
-            return userService.removeRole(id, role);
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
+            final UserRole userRole = UserRole.fromValue(role);
+            if (UserRole.fromValue(role) != null) {
+                return userService.removeRole(id, userRole);
+            }
+            throw new CustomInvalidFieldException("role");
         }
         throw new CustomNotAuthorizedException();
     }
@@ -188,11 +190,9 @@ public class UserController {
     @ResponseBody
     public void delete(
             @PathVariable("id") final String id,
-            final Principal principal)
+            final Principal token)
             throws CustomNotFoundException, CustomNotAuthorizedException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final User loggedUser = (User) token.getPrincipal();
-        if (loggedUser.getId().equals(id) || isAdmin(token)) {
+        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
             userService.delete(id);
         }
         throw new CustomNotAuthorizedException();
@@ -203,9 +203,8 @@ public class UserController {
     public Pageable<User> getByParameters(
             @RequestParam(value = "page", required = false, defaultValue = "0") final Integer pageNumber,
             @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size,
-            final Principal principal)
+            final Principal token)
             throws CustomNotAuthorizedException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
         if (isAdmin(token)) {
             return userService.getAll(pageNumber, size);
         }
@@ -239,10 +238,19 @@ public class UserController {
     private boolean isAdmin(final Principal principal) {
         final UserAuthenticationToken token = (UserAuthenticationToken) principal;
         for (GrantedAuthority ga : token.getAuthorities()) {
-            if (ga.getAuthority().equals("ROLE_ADMIN")) {
+            if (ga.getAuthority().equals(UserRole.ADMIN.toString())) {
                 return true;
             }
         }
         return false;
+    }
+
+    private UserInfo getLoggedUser(final Principal principal) throws CustomNotAuthorizedException {
+        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
+        final UserInfo userInfo = (UserInfo) token.getPrincipal();
+        if (userInfo == null) {
+            throw new CustomNotAuthorizedException();
+        }
+        return userInfo;
     }
 }

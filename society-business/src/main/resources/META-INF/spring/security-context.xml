@@ -9,6 +9,7 @@
     <http>
         <intercept-url pattern="/api/users" access="ROLE_ANONYMOUS,ROLE_USER"/>
         <intercept-url pattern="/api/users/*" access="ROLE_USER"/>
+        <intercept-url pattern="/api/users/**" access="ROLE_USER"/>
         <form-login
                 login-processing-url="/session/login"
                 always-use-default-target="true"/>
