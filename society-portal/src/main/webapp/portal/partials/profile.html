@@ -1,0 +1,23 @@
+<div class = "col-md-10">
+    <h1>
+        User <i>{{user.id}}</i></i><br>
+    </h1>
+</div>
+<p class = "col-md-12 info">
+    This page gathers all detailed information regarding the user <b><i>{{user.id}}</i></b>.<br>
+    <button class = "mt1 btn btn-default" ng-click = "update()"><i class = "fa fa-refresh"></i> Refresh</button>
+</p>
+
+<div class = "col-md-6">
+    <table class = "table table-bordered">
+        <tr>
+            <th class = "col-md-4">Login</th>
+            <td class = "col-md-8">
+                <span input-edit = "editLogin"
+                      model = "user.login">
+                    {{ user.login }}
+                </span>
+            </td>
+        </tr>
+    </table>
+</div>

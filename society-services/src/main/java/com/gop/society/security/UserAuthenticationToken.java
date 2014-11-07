@@ -2,7 +2,7 @@ package com.gop.society.security;
 
 import com.gop.society.utils.UserInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -11,25 +11,15 @@ import java.util.Collection;
  * @author GhostOfPQ
  */
 @Slf4j
-public class UserAuthenticationToken extends AbstractAuthenticationToken {
+public class UserAuthenticationToken extends UsernamePasswordAuthenticationToken {
+    private UserInfo userInfo;
 
-    private UserInfo loggedUser;
-
-    public UserAuthenticationToken(final UserInfo user,
-                                   final Collection<GrantedAuthority> grantedAuthorityCollection) {
-        super(grantedAuthorityCollection);
-        this.setAuthenticated(true);
-        this.loggedUser = user;
-        log.debug("New UserAuthenticationToken : {} / {}", user, grantedAuthorityCollection);
+    public UserAuthenticationToken(final Object principal, final Object credentials, final Collection<? extends GrantedAuthority> authorities, final UserInfo userInfo) {
+        super(principal, credentials, authorities);
+        this.userInfo = userInfo;
     }
 
-    @Override
-    public Object getPrincipal() {
-        return loggedUser;
-    }
-
-    @Override
-    public Object getCredentials() {
-        return null;
+    public UserInfo getUserInfo() {
+        return userInfo;
     }
 }

@@ -50,6 +50,10 @@ public class UserService {
         return passwordEncoder.isPasswordValid(encPassword, password, salt);
     }
 
+    public boolean authenticateEncoded(final String encPassword, final String password) {
+        return encPassword.equals(password);
+    }
+
     public User add(final User user) {
         return userRepository.save(user);
     }

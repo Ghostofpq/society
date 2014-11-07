@@ -247,7 +247,7 @@ public class UserController {
 
     private UserInfo getLoggedUser(final Principal principal) throws CustomNotAuthorizedException {
         final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final UserInfo userInfo = (UserInfo) token.getPrincipal();
+        final UserInfo userInfo = token.getUserInfo();
         if (userInfo == null) {
             throw new CustomNotAuthorizedException();
         }

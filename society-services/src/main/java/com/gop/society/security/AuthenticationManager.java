@@ -38,9 +38,9 @@ public class AuthenticationManager implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
+        log.debug("authenticate: {}", authentication.toString());
         final String login = authentication.getName();
         final User user;
-
         try {
             user = userService.getByLogin(login);
         } catch (CustomNotFoundException e) {
@@ -48,25 +48,38 @@ public class AuthenticationManager implements AuthenticationProvider {
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
 
-        if (userService.authenticate(user.getPassword(), authentication.getCredentials().toString(), user.getSalt())) {
-            List<GrantedAuthority> grantedAuths = new ArrayList<>();
-            for (UserRole role : user.getUserRole()) {
-                grantedAuths.add(new SimpleGrantedAuthority(role.toString()));
+        if (authentication instanceof UserAuthenticationToken) {
+            log.debug("Token is already a UserAuthenticationToken");
+            final String encodedPassword = authentication.getCredentials().toString();
+            if (userService.authenticateEncoded(user.getPassword(), encodedPassword)) {
+                return authentication;
             }
-            final UserInfo userInfo = new UserInfo();
-            userInfo.setId(user.getId());
-            userInfo.setLogin(user.getLogin());
-            userInfo.setEmail(user.getEmail());
-            return new UserAuthenticationToken(userInfo, grantedAuths);
-        } else {
-            log.error("2-Invalid login or Password");
+            log.error("3-Invalid login or Password");
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
+        } else {
+            log.debug("1st connection, encoding password");
+            final String encodedPassword = userService.encodePassword(authentication.getCredentials().toString(), user.getSalt());
+            if (userService.authenticateEncoded(user.getPassword(), encodedPassword)) {
+                List<GrantedAuthority> grantedAuths = new ArrayList<>();
+                for (UserRole role : user.getUserRole()) {
+                    grantedAuths.add(new SimpleGrantedAuthority(role.toString()));
+                }
+                final UserInfo userInfo = new UserInfo();
+                userInfo.setId(user.getId());
+                userInfo.setLogin(user.getLogin());
+                userInfo.setEmail(user.getEmail());
+
+                return new UserAuthenticationToken(authentication.getPrincipal(), encodedPassword, grantedAuths, userInfo);
+            } else {
+                log.error("2-Invalid login or Password");
+                throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
+            }
         }
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        log.debug("supports");
+        log.debug("supports : {}", authentication);
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 }

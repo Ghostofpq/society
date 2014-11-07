@@ -17,16 +17,16 @@
                 class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
 
     <beans:import resource="classpath:META-INF/spring/mongo-context.xml"/>
-    <!-- API urls -->
+    <!-- API urls
     <http pattern="/api/**" entry-point-ref="authEntryPoint403">
     </http>
 
-    <!-- 403 exception on partials -->
+    <!-- 403 exception on partials
     <http pattern="/portal/partials/**" entry-point-ref="authEntryPoint403">
         <intercept-url pattern="/**" access="ROLE_USER"/>
     </http>
 
-    <!-- access to login.html -->
+    <!-- access to login.html
     <http auto-config='true' pattern="/portal/login.html" security="none"/>
 
     <http auto-config='true' pattern="/**">
@@ -50,5 +50,5 @@
 
     <authentication-manager>
         <authentication-provider ref='authenticationManager'/>
-    </authentication-manager>
+    </authentication-manager>              -->
 </beans:beans>

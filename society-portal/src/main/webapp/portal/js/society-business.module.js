@@ -5,10 +5,10 @@ var defaults = {
     page: 0
 }
 
-var societyBusiness = angular.module('society-business', [])
+angular.module('society-business', [])
     .value('baseUrl', '0.1')
     .provider("$societyBusiness", function(){
-        var baseUrl = "./";
+        var baseUrl = "/api/";
      	var headers = {
      	    "Content-Type" : "application/json"
      	};
@@ -23,7 +23,14 @@ var societyBusiness = angular.module('society-business', [])
             // return service
             $get: function($http){
                 return {
+                    baseUrl: function(){
+                        return baseUrl;
+                    },
 
+                    updateUserLogin: function(id,login){
+                        var url = baseUrl + "users/" + id + "/login";
+                        return $http.put(url, login);
+                    }
                 }
             }
         }

@@ -11,7 +11,7 @@ angular.module('authentication', [])
 				// get current loggedin User account info
 				update: function() {
 				    console.log("update Auth");
-                    return $http.get("../api/user")
+                    return $http.get("/info")
                         .success(function(u){
                             user=u;
                         })

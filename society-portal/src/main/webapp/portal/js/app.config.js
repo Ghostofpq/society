@@ -27,15 +27,14 @@ app
 				templateUrl: 'partials/dashboard.html',
 				controller: "dashboard",
 			})
+            .when('/profile', {
+				templateUrl: 'partials/profile.html',
+				controller: "profile",
+			})
 			// Default
 			// -----------------
 			.otherwise({
 				redirectTo: '/dashboard'
 			});
 	})
-
-	// societyBusiness
-// 	.config(function($societyBusiness) {
-// 		$societyBusiness.baseUrl("localhost:1338/api/");
-// 	});
 
