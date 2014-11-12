@@ -1,10 +1,9 @@
-package com.gop.society.security;
+package com.gop.society.portal.security;
 
 import com.gop.society.exceptions.CustomInvalidLoginOrPasswordException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
 import com.gop.society.services.UserService;
-import com.gop.society.utils.UserInfo;
 import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,36 +43,20 @@ public class AuthenticationManager implements AuthenticationProvider {
         try {
             user = userService.getByLogin(login);
         } catch (CustomNotFoundException e) {
-            log.error("1-Invalid login or Password");
+            log.error("1-Invalid login");
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
-
-        if (authentication instanceof UserAuthenticationToken) {
-            log.debug("Token is already a UserAuthenticationToken");
-            final String encodedPassword = authentication.getCredentials().toString();
-            if (userService.authenticateEncoded(user.getPassword(), encodedPassword)) {
-                return authentication;
+        log.debug("1st connection, encoding password");
+        final String encodedPassword = userService.encodePassword(authentication.getCredentials().toString(), user.getSalt());
+        if (userService.authenticateEncoded(user.getPassword(), encodedPassword)) {
+            List<GrantedAuthority> grantedAuths = new ArrayList<>();
+            for (UserRole role : user.getUserRole()) {
+                grantedAuths.add(new SimpleGrantedAuthority(role.toString()));
             }
-            log.error("3-Invalid login or Password");
-            throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
+            return new UsernamePasswordAuthenticationToken(user.getId(), authentication.getCredentials(), grantedAuths);
         } else {
-            log.debug("1st connection, encoding password");
-            final String encodedPassword = userService.encodePassword(authentication.getCredentials().toString(), user.getSalt());
-            if (userService.authenticateEncoded(user.getPassword(), encodedPassword)) {
-                List<GrantedAuthority> grantedAuths = new ArrayList<>();
-                for (UserRole role : user.getUserRole()) {
-                    grantedAuths.add(new SimpleGrantedAuthority(role.toString()));
-                }
-                final UserInfo userInfo = new UserInfo();
-                userInfo.setId(user.getId());
-                userInfo.setLogin(user.getLogin());
-                userInfo.setEmail(user.getEmail());
-
-                return new UserAuthenticationToken(authentication.getPrincipal(), encodedPassword, grantedAuths, userInfo);
-            } else {
-                log.error("2-Invalid login or Password");
-                throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
-            }
+            log.error("2-Invalid Password");
+            throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
         }
     }
 

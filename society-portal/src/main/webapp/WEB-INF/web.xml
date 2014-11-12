@@ -31,12 +31,12 @@
     <!-- UserServlet -->
     <servlet>
         <servlet-name>UserServlet</servlet-name>
-        <servlet-class>com.gop.society.portal.UserServlet</servlet-class>
+        <servlet-class>com.gop.society.portal.servlets.UserServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
-        <url-pattern>/api/user</url-pattern>
+        <url-pattern>/session/user</url-pattern>
     </servlet-mapping>
 
     <!-- Spring : Application Context loader -->
@@ -48,7 +48,7 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <!-- Spring Security -->
+    <!-- Spring Security       -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -61,7 +61,7 @@
     <!-- Proxy Servlet : Society Business-->
     <servlet>
         <servlet-name>society-api</servlet-name>
-        <servlet-class>com.gop.society.portal.ProxyServlet</servlet-class>
+        <servlet-class>com.gop.society.portal.servlets.ProxyServlet</servlet-class>
         <init-param>
             <param-name>properties</param-name>
             <param-value>portal.properties</param-value>
@@ -74,7 +74,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>society-api</servlet-name>
-        <url-pattern>/api/sb/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
 

@@ -13,27 +13,13 @@
     <context:property-placeholder location="classpath:portal.properties"/>
     <context:annotation-config/>
     <context:component-scan base-package="com.gop.society"/>
-    <beans:bean id="authEntryPoint403"
-                class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
-
     <beans:import resource="classpath:META-INF/spring/mongo-context.xml"/>
-    <!-- API urls
-    <http pattern="/api/**" entry-point-ref="authEntryPoint403">
-    </http>
 
-    <!-- 403 exception on partials
-    <http pattern="/portal/partials/**" entry-point-ref="authEntryPoint403">
-        <intercept-url pattern="/**" access="ROLE_USER"/>
-    </http>
-
-    <!-- access to login.html
+    <!--  access to login.html     -->
     <http auto-config='true' pattern="/portal/login.html" security="none"/>
-
-    <http auto-config='true' pattern="/**">
+    <http>
         <intercept-url pattern="/portal/*" access="ROLE_USER"/>
-        <intercept-url pattern="/portal/partials/**" access="ROLE_USER"/>
-        <intercept-url pattern="/portal/**" access="ROLE_ANONYMOUS,ROLE_USER"/>
-
+        <intercept-url pattern="/api/*" access="ROLE_USER"/>
         <form-login login-processing-url="/session/login"
                     password-parameter="password"
                     username-parameter="username"
@@ -50,5 +36,5 @@
 
     <authentication-manager>
         <authentication-provider ref='authenticationManager'/>
-    </authentication-manager>              -->
+    </authentication-manager>
 </beans:beans>

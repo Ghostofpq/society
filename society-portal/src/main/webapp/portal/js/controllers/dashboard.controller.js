@@ -1,9 +1,12 @@
-app.controller("dashboard", function ($scope, $auth) {
+app.controller("dashboard", function ($scope, $societyBusiness, $auth) {
     console.log("dashboard");
     var update = $scope.update = function(){
         $auth.update()
-            .success(function(user){
-                $scope.user = user;
+            .success(function(userToken){
+                $societyBusiness.getUser(userToken.principal)
+                    .success(function(user){
+                        $scope.user = user;
+                    })
             })
     };
     update();

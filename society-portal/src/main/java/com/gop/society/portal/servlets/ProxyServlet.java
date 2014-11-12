@@ -1,4 +1,4 @@
-package com.gop.society.portal;
+package com.gop.society.portal.servlets;
 
 import lombok.extern.slf4j.Slf4j;
 

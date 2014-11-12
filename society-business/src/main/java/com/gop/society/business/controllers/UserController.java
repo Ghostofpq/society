@@ -4,22 +4,18 @@ import com.gop.society.exceptions.CustomInvalidFieldException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
-import com.gop.society.security.UserAuthenticationToken;
 import com.gop.society.services.UserService;
 import com.gop.society.utils.Pageable;
 import com.gop.society.utils.UserCreationRequest;
-import com.gop.society.utils.UserInfo;
 import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.security.Principal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,43 +68,31 @@ public class UserController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public User get(
-            @PathVariable("id") final String id,
-            final Principal token)
+            @PathVariable("id") final String id)
             throws CustomNotFoundException, CustomNotAuthorizedException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            return userService.get(id);
-        }
-        throw new CustomNotAuthorizedException();
+        return userService.get(id);
     }
 
     @RequestMapping(value = "/{id}/login", method = RequestMethod.PUT)
     @ResponseBody
     public User updateLogin(
             @PathVariable("id") final String id,
-            @RequestBody final String login,
-            final Principal token)
+            @RequestBody final String login)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            return userService.updateLogin(id, login);
-        }
-        throw new CustomNotAuthorizedException();
+        return userService.updateLogin(id, login);
     }
 
     @RequestMapping(value = "/{id}/password", method = RequestMethod.PUT)
     @ResponseBody
     public User updatePassword(
             @PathVariable("id") final String id,
-            @RequestBody final String newPassword,
-            final Principal token)
+            @RequestBody final String newPassword)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            return userService.updatePassword(id, newPassword);
-        }
-        throw new CustomNotAuthorizedException();
+        return userService.updatePassword(id, newPassword);
     }
 
 
@@ -116,99 +100,75 @@ public class UserController {
     @ResponseBody
     public User updateEmail(
             @PathVariable("id") final String id,
-            @RequestBody final String email,
-            final Principal token)
+            @RequestBody final String email)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            return userService.updateEmail(id, email);
-        }
-        throw new CustomNotAuthorizedException();
+        return userService.updateEmail(id, email);
     }
 
     @RequestMapping(value = "/{id}/roles", method = RequestMethod.PUT)
     @ResponseBody
     public User updateRoles(
             @PathVariable("id") final String id,
-            @RequestBody final List<String> roles,
-            final Principal token)
+            @RequestBody final List<String> roles)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            final List<UserRole> userRoles = new ArrayList<>();
-            for (String role : roles) {
-                if (UserRole.fromValue(role) != null) {
-                    userRoles.add(UserRole.fromValue(role));
-                }
+        final List<UserRole> userRoles = new ArrayList<>();
+        for (String role : roles) {
+            if (UserRole.fromValue(role) != null) {
+                userRoles.add(UserRole.fromValue(role));
             }
-            return userService.updateRoles(id, userRoles);
         }
-        throw new CustomNotAuthorizedException();
+        return userService.updateRoles(id, userRoles);
     }
 
     @RequestMapping(value = "/{id}/roles/add", method = RequestMethod.PUT)
     @ResponseBody
     public User addRole(
             @PathVariable("id") final String id,
-            @RequestBody final String role,
-            final Principal token)
+            @RequestBody final String role)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            final UserRole userRole = UserRole.fromValue(role);
-            if (UserRole.fromValue(role) != null) {
-                return userService.addRole(id, userRole);
-            }
-            throw new CustomInvalidFieldException("role");
+        final UserRole userRole = UserRole.fromValue(role);
+        if (UserRole.fromValue(role) != null) {
+            return userService.addRole(id, userRole);
         }
-        throw new CustomNotAuthorizedException();
+        throw new CustomInvalidFieldException("role");
     }
 
     @RequestMapping(value = "/{id}/roles/remove", method = RequestMethod.PUT)
     @ResponseBody
     public User removeRole(
             @PathVariable("id") final String id,
-            @RequestBody final String role,
-            final Principal token)
+            @RequestBody final String role)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
             CustomInvalidFieldException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            final UserRole userRole = UserRole.fromValue(role);
-            if (UserRole.fromValue(role) != null) {
-                return userService.removeRole(id, userRole);
-            }
-            throw new CustomInvalidFieldException("role");
+        final UserRole userRole = UserRole.fromValue(role);
+        if (UserRole.fromValue(role) != null) {
+            return userService.removeRole(id, userRole);
         }
-        throw new CustomNotAuthorizedException();
+        throw new CustomInvalidFieldException("role");
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void delete(
-            @PathVariable("id") final String id,
-            final Principal token)
+            @PathVariable("id") final String id)
             throws CustomNotFoundException, CustomNotAuthorizedException {
-        if (getLoggedUser(token).getId().equals(id) || isAdmin(token)) {
-            userService.delete(id);
-        }
-        throw new CustomNotAuthorizedException();
+        userService.delete(id);
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     @ResponseBody
     public Pageable<User> getByParameters(
             @RequestParam(value = "page", required = false, defaultValue = "0") final Integer pageNumber,
-            @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size,
-            final Principal token)
+            @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size)
             throws CustomNotAuthorizedException {
-        if (isAdmin(token)) {
-            return userService.getAll(pageNumber, size);
-        }
-        throw new CustomNotAuthorizedException();
+        return userService.getAll(pageNumber, size);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -235,22 +195,4 @@ public class UserController {
         return e.getMessage();
     }
 
-    private boolean isAdmin(final Principal principal) {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        for (GrantedAuthority ga : token.getAuthorities()) {
-            if (ga.getAuthority().equals(UserRole.ADMIN.toString())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private UserInfo getLoggedUser(final Principal principal) throws CustomNotAuthorizedException {
-        final UserAuthenticationToken token = (UserAuthenticationToken) principal;
-        final UserInfo userInfo = token.getUserInfo();
-        if (userInfo == null) {
-            throw new CustomNotAuthorizedException();
-        }
-        return userInfo;
-    }
 }

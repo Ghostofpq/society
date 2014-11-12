@@ -27,6 +27,11 @@ angular.module('society-business', [])
                         return baseUrl;
                     },
 
+                    getUser:function(id){
+                       var url = baseUrl + "users/" + id;
+                       return $http.get(url);
+                    },
+
                     updateUserLogin: function(id,login){
                         var url = baseUrl + "users/" + id + "/login";
                         return $http.put(url, login);

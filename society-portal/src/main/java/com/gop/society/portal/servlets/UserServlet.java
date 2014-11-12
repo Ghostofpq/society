@@ -1,8 +1,8 @@
-package com.gop.society.portal;
+package com.gop.society.portal.servlets;
 
-import com.gop.society.models.User;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -25,12 +25,14 @@ public class UserServlet extends HttpServlet {
             // NOT authenticated
             resp.getWriter().write(mapper.writeValueAsString(null));
         } else {
-            if (authentication.getPrincipal() instanceof User) {
+            if (authentication instanceof UsernamePasswordAuthenticationToken) {
                 // authenticated, returning the user desc
-                final User user = (User) authentication.getPrincipal();
+                final UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
                 // Write the response
-                resp.getWriter().write(mapper.writeValueAsString(user));
+                resp.getWriter().write(mapper.writeValueAsString(usernamePasswordAuthenticationToken));
+                log.debug(usernamePasswordAuthenticationToken.toString());
             } else {
+                log.error("unexpecter authent : {}", authentication.toString());
                 authentication.setAuthenticated(false);
                 resp.getWriter().write(mapper.writeValueAsString(null));
             }

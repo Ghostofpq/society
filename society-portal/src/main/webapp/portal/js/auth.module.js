@@ -6,20 +6,20 @@ angular.module('authentication', [])
 
 		// AuthentificationService
 		.service("$auth", function($http, $location) {
-		    var user = undefined;
+		    var userToken = undefined;
 			return {
 				// get current loggedin User account info
 				update: function() {
 				    console.log("update Auth");
-                    return $http.get("/info")
-                        .success(function(u){
-                            user=u;
+                    return $http.get("/session/user")
+                        .success(function(res){
+                            console.log(res);
+                            userToken=res;
                         })
                 },
 				getUser: function() {
-					return user;
+					return userToken;
 				},
-
 				// logout
 				logout: function() {
 					return $http.get("http://localhost:1337/session/logout")
@@ -28,9 +28,9 @@ angular.module('authentication', [])
 						});
 				},
 				hasRole: function(role){
-                    if(angular.isUndefined(user)) return false;
-                    for(var i in user.userRole){
-                        if(user.userRole[i] == role) return true;
+                    if(angular.isUndefined(userToken)) return false;
+                    for(var i in userToken.userRole){
+                        if(userToken.userRole[i] == role) return true;
                     }
                     return false;
                 }

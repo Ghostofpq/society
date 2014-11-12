@@ -12,5 +12,5 @@
     <mvc:annotation-driven/>
     <context:component-scan base-package="com.gop.society"/>
     <import resource="classpath:META-INF/spring/mongo-context.xml"/>
-    <import resource="classpath:META-INF/spring/security-context.xml"/>
+    <!--<import resource="classpath:META-INF/spring/security-context.xml"/>     -->
 </beans>

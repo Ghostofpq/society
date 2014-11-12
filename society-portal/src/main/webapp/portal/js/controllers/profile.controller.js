@@ -2,8 +2,11 @@ app.controller("profile", function ($scope, $auth, $societyBusiness, toaster) {
     console.log("profile");
     var update = $scope.update = function(){
         $auth.update()
-            .success(function(user){
-                $scope.user = user;
+            .success(function(userToken){
+                $societyBusiness.getUser(userToken.principal)
+                    .success(function(user){
+                        $scope.user = user;
+                    })
             })
     };
     update();
