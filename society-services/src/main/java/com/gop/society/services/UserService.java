@@ -54,8 +54,11 @@ public class UserService {
         return encPassword.equals(password);
     }
 
-    public User add(final User user) {
-        return userRepository.save(user);
+    public User add(User user) {
+        log.debug("Save {} in repository", user);
+        user = userRepository.save(user);
+        log.debug("Result {}", user);
+        return user;
     }
 
     public User get(final String id) throws CustomNotFoundException {
@@ -133,7 +136,7 @@ public class UserService {
 
     public void delete(final String id) throws CustomNotFoundException {
         final User user = get(id);
-        throw new CustomUserNotFoundForIdException(id);
+        userRepository.delete(user);
     }
 
     public Pageable<User> getAll(final int pageNumber, final int size) {

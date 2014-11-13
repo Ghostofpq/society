@@ -46,6 +46,16 @@ var societyModule = angular.module("society", [])
                        var url = baseUrl + "users/all";
                        return $http.get(url);
                     },
+                    addUser:function(login,password,email){
+                        var user = {};
+                        user.login=login;
+                        user.password=password;
+                        user.email=email;
+                        var url = baseUrl + "users";
+                        console.log(url);
+                        console.log(user);
+                        return $http.post(url,user);
+                    },
                     getUser:function(id){
                        var url = baseUrl + "users/" + id;
                        return $http.get(url);

@@ -30,6 +30,7 @@ app
 				templateUrl: 'partials/profile.html',
 				controller: "profile",
 			})
+
 			// Default
 			// -----------------
 			.otherwise({

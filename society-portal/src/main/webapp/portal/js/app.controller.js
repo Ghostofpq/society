@@ -16,3 +16,18 @@ app.controller("main", function ($scope, $location, $http, $auth, toaster) {
 
     $scope.logout = $auth.logout;
 });
+
+app.controller("register", function ($scope, $location, $society, toaster) {
+    var addUser = $scope.addUser = function(){
+        console.log("addUser");
+        console.log($scope.newUser);
+        $society.addUser($scope.newUser.username,$scope.newUser.password,$scope.newUser.email)
+    	    .success(function(user){
+                console.log(user);
+    	    })
+    	    .error(function(err){
+    	        console.log(err);
+    	    	toaster.pop("error", "Error", err);
+    	    });
+    }
+});
