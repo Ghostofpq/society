@@ -175,7 +175,7 @@ public class UserController {
     @ExceptionHandler(CustomNotFoundException.class)
     @ResponseBody
     private String handleNotFoundException(CustomNotFoundException e) {
-        log.error(e.getMessage());
+        log.error(HttpStatus.NOT_FOUND + ":" + e.getMessage());
         return e.getMessage();
     }
 
@@ -183,7 +183,7 @@ public class UserController {
     @ExceptionHandler(CustomNotAuthorizedException.class)
     @ResponseBody
     private String handleNotAuthorizedException(CustomNotAuthorizedException e) {
-        log.error(e.getMessage());
+        log.error(HttpStatus.FORBIDDEN + ":" + e.getMessage());
         return e.getMessage();
     }
 
@@ -191,8 +191,7 @@ public class UserController {
     @ExceptionHandler(CustomInvalidFieldException.class)
     @ResponseBody
     private String handleInvalidFieldException(CustomInvalidFieldException e) {
-        log.error(e.getMessage());
+        log.error(HttpStatus.BAD_REQUEST + ":" + e.getMessage());
         return e.getMessage();
     }
-
 }

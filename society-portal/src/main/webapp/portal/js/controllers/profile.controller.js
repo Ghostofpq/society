@@ -1,40 +1,36 @@
-app.controller("profile", function ($scope, $auth, $societyBusiness, toaster) {
+app.controller("profile", function ($scope, $http, $auth, $society, toaster) {
     console.log("profile");
     var update = $scope.update = function(){
         $auth.update()
             .success(function(userToken){
-                $societyBusiness.getUser(userToken.principal)
+                $society.getUser(userToken.principal)
                     .success(function(user){
+    	                console.log(user);
                         $scope.user = user;
                     })
+     		        .error(function(err){
+    	                console.log(err);
+     		        	toaster.pop("error", "Error", "error while updating");
+     		        });
             })
+            .error(function(err){
+                console.log(err);
+                toaster.pop("error", "Error", "error while $auth.update()");
+            });
     };
     update();
 
-    // edit fields
-    var editDeviceField = function(field){
-        return function(value){
-            var d = {}; d[field] = value;
-            $umDm.updateDevice(deviceId, angular.extend($scope.device, d))
-    		    .success(function(){
-    		    	toaster.pop("success", field + "Updated", field + "successfully updated");
-    		    	update();
-    		    })
-    		    .error(function(err){
-    		    	toaster.pop("error", "Error", "error while updating " + field);
-    		    });
-        }
-    }
-
     var editLogin = $scope.editLogin = function(login){
         console.log("editLogin");
-        $societyBusiness.updateUserLogin($scope.user.id,login)
+        $society.updateUserLogin($scope.user.id,login)
     	    .success(function(){
+    	        console.log("success");
     	    	toaster.pop("success", "Login Updated", "Login successfully updated");
     	    	update();
     	    })
     	    .error(function(err){
-    	    	toaster.pop("error", "Error", "error while updating login");
+    	        console.log(err);
+    	    	toaster.pop("error", "Error", err);
     	    });
     }
 });

@@ -5,13 +5,29 @@ var defaults = {
     page: 0
 }
 
-angular.module('society-business', [])
-    .value('baseUrl', '0.1')
-    .provider("$societyBusiness", function(){
-        var baseUrl = "/api/";
+var societyModule = angular.module("society", [])
+    .provider("$society", function(){
+       	var baseUrl = "./";
      	var headers = {
      	    "Content-Type" : "application/json"
      	};
+
+        function params(){
+            var l = [];
+            return {
+            	add: function(k, v){
+            		if(!angular.isUndefined(v) && v != null){
+            			l.push(k+"="+v);
+            		}
+            	},
+            	toString: function(){
+            		if(l.length<1){
+            			return "";
+            		}
+            		return "?" + l.join("&");
+            	}
+            }
+        }
 
         return {
             baseUrl: function(v){
@@ -24,9 +40,12 @@ angular.module('society-business', [])
             $get: function($http){
                 return {
                     baseUrl: function(){
-                        return baseUrl;
+                        return baseUrl
                     },
-
+                    getAllUser:function(){
+                       var url = baseUrl + "users/all";
+                       return $http.get(url);
+                    },
                     getUser:function(id){
                        var url = baseUrl + "users/" + id;
                        return $http.get(url);

@@ -156,8 +156,8 @@ public class ProxyServlet extends HttpServlet {
             doProxy(request, response, url);
 
         } catch (Exception e) {
-            log.warn("error", e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            log.warn("error", e.getMessage());
+            //response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -252,9 +252,14 @@ public class ProxyServlet extends HttpServlet {
             }
 
             // Response Body
-            BufferedInputStream webToProxyBuf = new BufferedInputStream(httpConn.getInputStream());
-            BufferedOutputStream proxyToClientBuf = new BufferedOutputStream(response.getOutputStream());
+            BufferedInputStream webToProxyBuf=null;
+            try {
+                webToProxyBuf = new BufferedInputStream(httpConn.getInputStream());
+            }catch (IOException e) {
+                webToProxyBuf = new BufferedInputStream(httpConn.getErrorStream());
+            }
 
+            BufferedOutputStream  proxyToClientBuf = new BufferedOutputStream(response.getOutputStream());
             // buffer size 4Ko
             byte[] buff = new byte[BUFFER_SIZE];
             int len;

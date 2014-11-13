@@ -1,8 +1,7 @@
 'use strict';
-
 app
     // error 403 => reload
-	.config(function($httpProvider){
+    .config(function($httpProvider){
 		// setting interceptor on http errors :
 		$httpProvider.interceptors.push(function($q) {
 			return {
@@ -19,7 +18,7 @@ app
 	})
 
 	// Routes
-	.config(function($routeProvider) {
+    .config(function($routeProvider) {
 		$routeProvider
 			// Dashboard
 			// -----------------
@@ -37,4 +36,8 @@ app
 				redirectTo: '/dashboard'
 			});
 	})
+    .config(function($societyProvider){
+        $societyProvider.baseUrl("/api/");
+    })
+
 

@@ -87,27 +87,21 @@ public class UserService {
     public User updatePassword(final String id, final String newPassword)
             throws CustomNotFoundException, CustomInvalidFieldException {
         final User user = get(id);
-        if (passwordIsValid(newPassword)) {
-            // Generate Salt
-            final Random r = new SecureRandom();
-            byte[] salt = new byte[32];
-            r.nextBytes(salt);
-            // Encode Password
-            user.setSalt(new String(salt));
-            user.setPassword(encodePassword(newPassword, user.getSalt()));
-            return userRepository.save(user);
-        }
-        throw new CustomInvalidFieldException("Password");
+        // Generate Salt
+        final Random r = new SecureRandom();
+        byte[] salt = new byte[32];
+        r.nextBytes(salt);
+        // Encode Password
+        user.setSalt(new String(salt));
+        user.setPassword(encodePassword(newPassword, user.getSalt()));
+        return userRepository.save(user);
     }
 
     public User updateEmail(final String id, final String newEmail)
             throws CustomNotFoundException, CustomInvalidFieldException {
         final User user = get(id);
-        if (emailIsValid(newEmail)) {
-            user.setEmail(newEmail);
-            return userRepository.save(user);
-        }
-        throw new CustomInvalidFieldException("Email");
+        user.setEmail(newEmail);
+        return userRepository.save(user);
     }
 
     public User addRole(final String id, final UserRole role)
@@ -153,16 +147,13 @@ public class UserService {
 
     private boolean loginIsValid(final String login) {
         log.debug("check {}", login);
-        return (login != null && login.length() >= 3 && login.length() <= 18);
-    }
-
-    private boolean emailIsValid(final String email) {
-        log.debug("check {}", email);
-        return (email != null && emailValidator.validate(email));
-    }
-
-    private boolean passwordIsValid(final String password) {
-        log.debug("check {}", password);
-        return (password != null && password.length() >= 3 && password.length() <= 18);
+        try {
+            getByLogin(login);
+            log.error("{} is already used => KO", login);
+            return false;
+        } catch (CustomNotFoundException e) {
+            log.debug("{} is not used => OK", login);
+            return true;
+        }
     }
 }

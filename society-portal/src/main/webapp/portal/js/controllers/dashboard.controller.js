@@ -1,13 +1,17 @@
-app.controller("dashboard", function ($scope, $societyBusiness, $auth) {
+app.controller("dashboard", function ($scope, $society, $auth, toaster) {
     console.log("dashboard");
     var update = $scope.update = function(){
         $auth.update()
             .success(function(userToken){
-                $societyBusiness.getUser(userToken.principal)
+                $society.getUser(userToken.principal)
                     .success(function(user){
                         $scope.user = user;
                     })
             })
     };
     update();
+
+    $scope.pop = function(){
+        toaster.pop('success', "title", "text");
+    };
 });

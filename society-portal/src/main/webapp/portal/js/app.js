@@ -4,10 +4,11 @@ var app;
 
 // Declare app level module
 app = angular.module('app', [
-	'authentication',
-	'society-business',
+	'society',
 	'toaster',
-	'ngRoute']);
+    'ngRoute',
+	'authentication'
+	]);
 
 
 // **** Services ***
