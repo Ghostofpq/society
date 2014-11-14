@@ -56,6 +56,7 @@ var societyModule = angular.module("society", [])
                         console.log(user);
                         return $http.post(url,user);
                     },
+
                     getUser:function(id){
                        var url = baseUrl + "users/" + id;
                        return $http.get(url);

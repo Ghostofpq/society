@@ -19,12 +19,17 @@ app.controller("main", function ($scope, $location, $http, $auth, toaster) {
 
 app.controller("register", function ($scope, $location,$window, $society, $auth, toaster) {
     var addUser = $scope.addUser = function(){
+        var username = $scope.username;
+        var password = $scope.password;
+        var repassword = $scope.repassword;
+        var email = $scope.email;
+
         console.log("addUser");
         console.log($scope.newUser);
-        $society.addUser($scope.newUser.username,$scope.newUser.password,$scope.newUser.email)
+        $society.addUser(username,password,email)
     	    .success(function(user){
                 console.log(user);
-                $auth.login($scope.newUser.username,$scope.newUser.password)
+                $auth.login(username,password)
                     .success(function(){
                         console.log("OK");
                         $window.location.href ="/portal/index.html";
@@ -38,4 +43,8 @@ app.controller("register", function ($scope, $location,$window, $society, $auth,
     	    	toaster.pop("error", "Error", err);
     	    });
     }
+
+
+
+
 });
