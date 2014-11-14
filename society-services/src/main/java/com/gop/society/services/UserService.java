@@ -1,10 +1,7 @@
 package com.gop.society.services;
 
 import com.google.common.collect.Lists;
-import com.gop.society.exceptions.CustomInvalidFieldException;
-import com.gop.society.exceptions.CustomNotFoundException;
-import com.gop.society.exceptions.CustomUserNotFoundForIdException;
-import com.gop.society.exceptions.CustomUserNotFoundForLoginException;
+import com.gop.society.exceptions.*;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.utils.EmailValidator;
@@ -54,11 +51,12 @@ public class UserService {
         return encPassword.equals(password);
     }
 
-    public User add(User user) {
-        log.debug("Save {} in repository", user);
-        user = userRepository.save(user);
-        log.debug("Result {}", user);
-        return user;
+    public User add(final User user) throws CustomBadRequestException {
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Could not save new user.");
+        }
     }
 
     public User get(final String id) throws CustomNotFoundException {

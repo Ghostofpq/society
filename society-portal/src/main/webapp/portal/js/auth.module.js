@@ -20,6 +20,9 @@ angular.module('authentication', [])
 				getUser: function() {
 					return userToken;
 				},
+				login: function(username,password){
+				    return $http.post("http://localhost:1337/session/login?username="+username+"&password="+password);
+				},
 				// logout
 				logout: function() {
 					return $http.get("http://localhost:1337/session/logout")

@@ -11,5 +11,6 @@
 
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
         <constructor-arg ref="mongoDbFactory"/>
+        <property name="writeResultChecking" value="EXCEPTION"/>
     </bean>
 </beans>

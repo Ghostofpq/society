@@ -1,6 +1,6 @@
 package com.gop.society.business.controllers;
 
-import com.gop.society.exceptions.CustomInvalidFieldException;
+import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
@@ -40,7 +40,7 @@ public class UserController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
-    public User create(@RequestBody final UserCreationRequest userToCreate) {
+    public User create(@RequestBody final UserCreationRequest userToCreate) throws CustomBadRequestException {
         log.debug("In create with {}", userToCreate.getLogin());
 
         final User user = new User();
@@ -80,7 +80,7 @@ public class UserController {
             @RequestBody final String login)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
-            CustomInvalidFieldException {
+            CustomBadRequestException {
         return userService.updateLogin(id, login);
     }
 
@@ -91,7 +91,7 @@ public class UserController {
             @RequestBody final String newPassword)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
-            CustomInvalidFieldException {
+            CustomBadRequestException {
         return userService.updatePassword(id, newPassword);
     }
 
@@ -103,7 +103,7 @@ public class UserController {
             @RequestBody final String email)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
-            CustomInvalidFieldException {
+            CustomBadRequestException {
         return userService.updateEmail(id, email);
     }
 
@@ -114,7 +114,7 @@ public class UserController {
             @RequestBody final List<String> roles)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
-            CustomInvalidFieldException {
+            CustomBadRequestException {
         final List<UserRole> userRoles = new ArrayList<>();
         for (String role : roles) {
             if (UserRole.fromValue(role) != null) {
@@ -131,12 +131,12 @@ public class UserController {
             @RequestBody final String role)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
-            CustomInvalidFieldException {
+            CustomBadRequestException {
         final UserRole userRole = UserRole.fromValue(role);
         if (UserRole.fromValue(role) != null) {
             return userService.addRole(id, userRole);
         }
-        throw new CustomInvalidFieldException("role");
+        throw new CustomBadRequestException("role");
     }
 
     @RequestMapping(value = "/{id}/roles/remove", method = RequestMethod.PUT)
@@ -146,12 +146,12 @@ public class UserController {
             @RequestBody final String role)
             throws CustomNotFoundException,
             CustomNotAuthorizedException,
-            CustomInvalidFieldException {
+            CustomBadRequestException {
         final UserRole userRole = UserRole.fromValue(role);
         if (UserRole.fromValue(role) != null) {
             return userService.removeRole(id, userRole);
         }
-        throw new CustomInvalidFieldException("role");
+        throw new CustomBadRequestException("role");
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -188,9 +188,9 @@ public class UserController {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(CustomInvalidFieldException.class)
+    @ExceptionHandler(CustomBadRequestException.class)
     @ResponseBody
-    private String handleInvalidFieldException(CustomInvalidFieldException e) {
+    private String handleBadRequestException(CustomBadRequestException e) {
         log.error(HttpStatus.BAD_REQUEST + ":" + e.getMessage());
         return e.getMessage();
     }

@@ -17,13 +17,21 @@ app.controller("main", function ($scope, $location, $http, $auth, toaster) {
     $scope.logout = $auth.logout;
 });
 
-app.controller("register", function ($scope, $location, $society, toaster) {
+app.controller("register", function ($scope, $location,$window, $society, $auth, toaster) {
     var addUser = $scope.addUser = function(){
         console.log("addUser");
         console.log($scope.newUser);
         $society.addUser($scope.newUser.username,$scope.newUser.password,$scope.newUser.email)
     	    .success(function(user){
                 console.log(user);
+                $auth.login($scope.newUser.username,$scope.newUser.password)
+                    .success(function(){
+                        console.log("OK");
+                        $window.location.href ="/portal/index.html";
+                    })
+                    .error(function(err){
+                        console.log(err);
+                    })
     	    })
     	    .error(function(err){
     	        console.log(err);

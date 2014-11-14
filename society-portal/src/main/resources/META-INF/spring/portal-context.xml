@@ -15,16 +15,13 @@
     <context:component-scan base-package="com.gop.society"/>
     <beans:import resource="classpath:META-INF/spring/mongo-context.xml"/>
 
+
     <http pattern="/api/users" security="none"/>
     <http pattern="/portal/register.html" security="none"/>
     <http pattern="/portal/login.html" security="none"/>
 
-
     <http>
-        <intercept-url pattern="/**" access="ROLE_ADMIN"/>
-
         <intercept-url pattern="/portal/index.html" access="ROLE_USER"/>
-        <intercept-url pattern="/portal/partials/*" access="ROLE_USER"/>
         <intercept-url pattern="/api/**" access="ROLE_USER"/>
 
         <form-login login-processing-url="/session/login"
@@ -39,7 +36,6 @@
                 delete-cookies="true"
                 logout-success-url="/"/>
     </http>
-
     <authentication-manager>
         <authentication-provider ref='authenticationManager'/>
     </authentication-manager>
