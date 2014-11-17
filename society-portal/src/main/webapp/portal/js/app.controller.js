@@ -15,6 +15,8 @@ app.controller("main", function ($scope, $location, $http, $auth, toaster) {
 		});
 
     $scope.logout = $auth.logout;
+
+    $scope.hasRole = $auth.hasRole;
 });
 
 app.controller("register", function ($scope, $location,$window, $society, $auth, toaster) {
@@ -44,7 +46,8 @@ app.controller("register", function ($scope, $location,$window, $society, $auth,
     	    });
     }
 
-
-
+    var cancel = $scope.cancel = function(){
+        $window.location.href ="/portal/login.html";
+    }
 
 });

@@ -30,6 +30,10 @@ app
 				templateUrl: 'partials/profile.html',
 				controller: "profile",
 			})
+			 .when('/users', {
+             	templateUrl: 'partials/users.html',
+             	controller: "users",
+             })
 
 			// Default
 			// -----------------

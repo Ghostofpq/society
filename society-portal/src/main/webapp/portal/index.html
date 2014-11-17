@@ -33,6 +33,7 @@
     <!--Controllers-->
     <script src = "js/controllers/dashboard.controller.js"></script>
     <script src = "js/controllers/profile.controller.js"></script>
+    <script src = "js/controllers/users.controller.js"></script>
     <!-- APP CSS -->
     <link rel = "stylesheet" href = "css/app.css"/>
 </head>
@@ -52,14 +53,19 @@
             </div>
             <div id = "navbar" class = "collapse navbar-collapse">
                 <ul class = "nav navbar-nav">
-                    <li><a href = "#">Account</a></li>
                     <li><a href = "#profile">Profile</a></li>
-                    <li><a href = "#contact">About</a></li>
+                    <li><a href = "#about">About</a></li>
                     <li><a href = "#contact">Contact</a></li>
+                    <li ng-show = "hasRole('ROLE_ADMIN')"><a href = "#users">Admin</a></li>
+
+                </ul>
+                <ul class = "nav navbar-nav pull-right">
+                    <li><input type = "button" class = "btn" ng-click = "logout()" value="Logout"/></li>
                 </ul>
             </div>
         </div>
     </nav>
+
     <toaster-container></toaster-container>
     <div class = "container">
         <!-- CONTENT -->

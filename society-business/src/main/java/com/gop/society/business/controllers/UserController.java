@@ -41,7 +41,7 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
     public User create(@RequestBody final UserCreationRequest userToCreate) throws CustomBadRequestException {
-        log.debug("In create with {}", userToCreate.getLogin());
+        log.debug("In create with {}", userToCreate.toString());
 
         final User user = new User();
 

@@ -62,6 +62,19 @@ var societyModule = angular.module("society", [])
                        return $http.get(url);
                     },
 
+                    getUsers:function(page,size){
+                        var url = baseUrl + "users/all";
+                        var p = params();
+                        if(!angular.isUndefined(page) && page>=0){
+                            p.add("page", page);
+                        }
+                        if(!angular.isUndefined(size) && size>=0){
+                            p.add("size", size);
+                        }
+                        return $http.get(url+ p.toString());
+                    },
+
+
                     updateUserLogin: function(id,login){
                         var url = baseUrl + "users/" + id + "/login";
                         return $http.put(url, login);

@@ -32,8 +32,8 @@ angular.module('authentication', [])
 				},
 				hasRole: function(role){
                     if(angular.isUndefined(userToken)) return false;
-                    for(var i in userToken.userRole){
-                        if(userToken.userRole[i] == role) return true;
+                    for(var i in userToken.authorities){
+                        if(userToken.authorities[i].authority == role) return true;
                     }
                     return false;
                 }

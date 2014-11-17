@@ -1,0 +1,48 @@
+<table class = "col-md-12 table table-bordered table-striped mt1"
+       ng-show = "results.data">
+    <h2><i>{{results.totalCount}}</i> user(s)</h2>
+    <thead>
+    <tr>
+        <th style = "width: 1px"></th>
+        <th>Login</th>
+        <th>Roles</th>
+        <th>Email</th>
+        <th style = "width: 1px">Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr ng-repeat = "u in results.data | orderBy:'login'" ng-class = "{info: selectedIds[u.id]}">
+        <td>
+            <input type = "checkbox" ng-model = "selectedIds[u.id]">
+        </td>
+        <td>
+            <strong>{{u.login}}</strong>
+        </td>
+        <td>
+            <strong>{{u.userRole}}</strong>
+        </td>
+        <td>
+            <strong>{{u.email}}</strong>
+        </td>
+        <td>
+            <button class = "btn btn-default"
+                    ng-click = "$location.path('/users/'+u.id)">
+                <i class = "fa fa-eye"></i> Details
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div>
+    <pagination
+            total-items="results.totalCount"
+            ng-model="pagination.page"
+            max-size="5"
+            items-per-page="pagination.size"
+            class="pagination-sm"
+            boundary-links="true"
+            rotate="false"
+            num-pages="numPages"></pagination>
+</div>
+

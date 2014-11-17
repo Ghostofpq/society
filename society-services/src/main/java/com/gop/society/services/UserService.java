@@ -51,7 +51,7 @@ public class UserService {
         return encPassword.equals(password);
     }
 
-    public User add(final User user) throws CustomBadRequestException {
+    public User add(User user) throws CustomBadRequestException {
         try {
             return userRepository.save(user);
         } catch (Exception e) {

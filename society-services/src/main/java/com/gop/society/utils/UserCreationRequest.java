@@ -1,17 +1,11 @@
 package com.gop.society.utils;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 /**
  * @author GhostOfPQ
  */
-@Setter
-@Getter
-@ToString
-@EqualsAndHashCode
+@Data
 public class UserCreationRequest {
     private String login;
     private String password;

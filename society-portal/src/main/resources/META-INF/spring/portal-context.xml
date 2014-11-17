@@ -34,7 +34,7 @@
         <logout logout-url="/session/logout"
                 invalidate-session="true"
                 delete-cookies="true"
-                logout-success-url="/"/>
+                logout-success-url="/portal/login.html"/>
     </http>
     <authentication-manager>
         <authentication-provider ref='authenticationManager'/>
