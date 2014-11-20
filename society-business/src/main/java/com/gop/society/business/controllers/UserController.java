@@ -1,6 +1,7 @@
 package com.gop.society.business.controllers;
 
 import com.gop.society.exceptions.CustomBadRequestException;
+import com.gop.society.exceptions.CustomInvalidFieldException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
@@ -65,11 +66,34 @@ public class UserController {
         return userService.add(user);
     }
 
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ResponseBody
+    public User getUserPartial(
+            @RequestParam("id") final String id,
+            @RequestParam(value = "by", required = false, defaultValue = "id") final String identifier)
+            throws CustomNotFoundException, CustomBadRequestException {
+        User res;
+        switch (identifier) {
+            case "id":
+                res = userService.get(id);
+                break;
+            case "login":
+                res = userService.getByLogin(id);
+                break;
+            default:
+                throw new CustomInvalidFieldException("identifier");
+        }
+        // hide info not used by authentication manager
+        res.setEmail(null);
+        res.setLogin(null);
+        return res;
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public User get(
             @PathVariable("id") final String id)
-            throws CustomNotFoundException, CustomNotAuthorizedException {
+            throws CustomNotFoundException {
         return userService.get(id);
     }
 
@@ -79,7 +103,6 @@ public class UserController {
             @PathVariable("id") final String id,
             @RequestBody final String login)
             throws CustomNotFoundException,
-            CustomNotAuthorizedException,
             CustomBadRequestException {
         return userService.updateLogin(id, login);
     }
@@ -90,7 +113,6 @@ public class UserController {
             @PathVariable("id") final String id,
             @RequestBody final String newPassword)
             throws CustomNotFoundException,
-            CustomNotAuthorizedException,
             CustomBadRequestException {
         return userService.updatePassword(id, newPassword);
     }
@@ -102,7 +124,6 @@ public class UserController {
             @PathVariable("id") final String id,
             @RequestBody final String email)
             throws CustomNotFoundException,
-            CustomNotAuthorizedException,
             CustomBadRequestException {
         return userService.updateEmail(id, email);
     }
@@ -113,7 +134,6 @@ public class UserController {
             @PathVariable("id") final String id,
             @RequestBody final List<String> roles)
             throws CustomNotFoundException,
-            CustomNotAuthorizedException,
             CustomBadRequestException {
         final List<UserRole> userRoles = new ArrayList<>();
         for (String role : roles) {
@@ -130,7 +150,6 @@ public class UserController {
             @PathVariable("id") final String id,
             @RequestBody final String role)
             throws CustomNotFoundException,
-            CustomNotAuthorizedException,
             CustomBadRequestException {
         final UserRole userRole = UserRole.fromValue(role);
         if (UserRole.fromValue(role) != null) {
@@ -145,7 +164,6 @@ public class UserController {
             @PathVariable("id") final String id,
             @RequestBody final String role)
             throws CustomNotFoundException,
-            CustomNotAuthorizedException,
             CustomBadRequestException {
         final UserRole userRole = UserRole.fromValue(role);
         if (UserRole.fromValue(role) != null) {
@@ -158,7 +176,7 @@ public class UserController {
     @ResponseBody
     public void delete(
             @PathVariable("id") final String id)
-            throws CustomNotFoundException, CustomNotAuthorizedException {
+            throws CustomNotFoundException {
         userService.delete(id);
     }
 
@@ -166,8 +184,7 @@ public class UserController {
     @ResponseBody
     public Pageable<User> getByParameters(
             @RequestParam(value = "page", required = false, defaultValue = "0") final Integer pageNumber,
-            @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size)
-            throws CustomNotAuthorizedException {
+            @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size) {
         return userService.getAll(pageNumber, size);
     }
 

@@ -5,7 +5,7 @@ var defaults = {
     page: 0
 }
 
-var societyModule = angular.module("society", [])
+var societyModule = angular.module("society", ["authentication"])
     .provider("$society", function(){
        	var baseUrl = "./";
      	var headers = {
@@ -74,6 +74,10 @@ var societyModule = angular.module("society", [])
                         return $http.get(url+ p.toString());
                     },
 
+                    deleteUser:function(id){
+                        var url = baseUrl + "users/" + id;
+                        return $http.delete(url);
+                    },
 
                     updateUserLogin: function(id,login){
                         var url = baseUrl + "users/" + id + "/login";

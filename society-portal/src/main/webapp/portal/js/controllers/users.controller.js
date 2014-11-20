@@ -16,4 +16,25 @@ app.controller("users", function ($scope, $http, $auth, $society, toaster) {
             });
     }
     $scope.update()
+
+    var deleteUser = $scope.deleteUser = function(userId){
+         if(userIsAuthorizedToPerformAction(userId)){
+            $society.deleteUser(userId)
+                .success(function(res){
+    	    	    toaster.pop("success", "Login Updated", "User successfully deleted");
+    	    	    $scope.update();
+    	    	})
+                .error(function(err){
+                	toaster.pop("error", "Error", err);
+                });
+         }
+         else{
+            toaster.pop("error", "Error", "Not Authorized");
+         }
+    }
+
+    var userIsAuthorizedToPerformAction = function(id){
+       return ($auth.hasRole("ROLE_ADMIN"))
+    }
+
 })
