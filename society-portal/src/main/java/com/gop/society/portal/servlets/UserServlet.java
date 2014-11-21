@@ -32,7 +32,7 @@ public class UserServlet extends HttpServlet {
                 resp.getWriter().write(mapper.writeValueAsString(usernamePasswordAuthenticationToken));
                 log.debug(usernamePasswordAuthenticationToken.toString());
             } else {
-                log.error("unexpecter authent : {}", authentication.toString());
+                log.error("unexpected authent : {}", authentication.toString());
                 authentication.setAuthenticated(false);
                 resp.getWriter().write(mapper.writeValueAsString(null));
             }

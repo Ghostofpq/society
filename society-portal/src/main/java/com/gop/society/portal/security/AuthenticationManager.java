@@ -27,6 +27,7 @@ import java.util.List;
 @Component("authenticationManager")
 public class AuthenticationManager implements AuthenticationProvider {
     private ShaPasswordEncoder passwordEncoder;
+
     @PostConstruct
     private void init() {
         log.info("AuthenticationManager started !");

@@ -31,6 +31,4 @@
     <authentication-manager>
         <authentication-provider ref='authenticationManager'/>
     </authentication-manager>
-
-
 </beans:beans>
