@@ -60,7 +60,7 @@ public class UserController {
         // Set basic Role
         final List<UserRole> roles = new ArrayList<>();
         roles.add(UserRole.USER);
-        user.setUserRole(roles);
+        user.setUserRoles(roles);
 
         // Save
         return userService.add(user);

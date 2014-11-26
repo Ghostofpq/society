@@ -2,6 +2,7 @@ package com.gop.society.services;
 
 import com.google.common.collect.Lists;
 import com.gop.society.exceptions.*;
+import com.gop.society.models.Organization;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.utils.EmailValidator;
@@ -28,6 +29,8 @@ import java.util.Random;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private OrganizationService organizationService;
 
     private ShaPasswordEncoder passwordEncoder;
     private EmailValidator emailValidator;
@@ -108,8 +111,8 @@ public class UserService {
     public User addRole(final String id, final UserRole role)
             throws CustomNotFoundException, CustomInvalidFieldException {
         final User user = get(id);
-        if (!user.getUserRole().contains(role)) {
-            user.getUserRole().add(role);
+        if (!user.getUserRoles().contains(role)) {
+            user.getUserRoles().add(role);
             return userRepository.save(user);
         }
         throw new CustomInvalidFieldException("Role");
@@ -118,8 +121,8 @@ public class UserService {
     public User removeRole(final String id, final UserRole role)
             throws CustomNotFoundException, CustomInvalidFieldException {
         final User user = get(id);
-        if (user.getUserRole().contains(role)) {
-            user.getUserRole().remove(role);
+        if (user.getUserRoles().contains(role)) {
+            user.getUserRoles().remove(role);
             return userRepository.save(user);
         }
         throw new CustomInvalidFieldException("Role");
@@ -128,8 +131,13 @@ public class UserService {
     public User updateRoles(final String id, final List<UserRole> roles)
             throws CustomNotFoundException {
         final User user = get(id);
-        user.setUserRole(roles);
+        user.setUserRoles(roles);
         return userRepository.save(user);
+    }
+
+
+    public Organization createOrganization(final Organization organization) throws CustomBadRequestException {
+        return organizationService.add(organization);
     }
 
     public void delete(final String id) throws CustomNotFoundException {
