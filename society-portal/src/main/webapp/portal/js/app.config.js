@@ -30,11 +30,18 @@ app
 				templateUrl: 'partials/profile.html',
 				controller: "profile",
 			})
-			 .when('/users', {
-             	templateUrl: 'partials/users.html',
-             	controller: "users",
-             })
-
+			.when('/users', {
+            	templateUrl: 'partials/users.html',
+            	controller: "users",
+            })
+			.when('/organizations', {
+            	templateUrl: 'partials/organizations.html',
+            	controller: "organizations",
+            })
+			.when('/organizations/new', {
+            	templateUrl: 'partials/organization-new.html',
+            	controller: "organization-new",
+            })
 			// Default
 			// -----------------
 			.otherwise({

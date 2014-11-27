@@ -14,4 +14,8 @@ app.controller("dashboard", function ($scope, $society, $auth, toaster) {
     $scope.pop = function(){
         toaster.pop('success', "title", "text");
     };
+
+    $scope.createOrga = function(){
+        toaster.pop('success', "ORGA", "text");
+    };
 });

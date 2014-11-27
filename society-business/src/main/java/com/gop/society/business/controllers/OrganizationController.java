@@ -6,6 +6,7 @@ import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.Organization;
 import com.gop.society.services.CurrencyService;
 import com.gop.society.services.OrganizationService;
+import com.gop.society.services.QueryOrganizationService;
 import com.gop.society.services.UserService;
 import com.gop.society.utils.OrganizationCreationRequest;
 import com.gop.society.utils.OrganizationVO;
@@ -34,6 +35,8 @@ public class OrganizationController {
     private UserService userService;
     @Autowired
     private CurrencyService currencyService;
+    @Autowired
+    private QueryOrganizationService queryOrganizationService;
 
     @PostConstruct
     private void init() {
@@ -62,6 +65,19 @@ public class OrganizationController {
         // Save
         return organizationService.add(organization);
     }
+
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ResponseBody
+    public Pageable<Organization> getByParameters(
+            @RequestParam(value = "name", required = false) final String name,
+            @RequestParam(value = "user", required = false) final String user,
+            @RequestParam(value = "page", required = false, defaultValue = "0") final Integer pageNumber,
+            @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size)
+            throws CustomBadRequestException, CustomNotFoundException {
+        log.debug("In getByParameters");
+        return queryOrganizationService.getByParameters(name, user, pageNumber, size);
+    }
+
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody

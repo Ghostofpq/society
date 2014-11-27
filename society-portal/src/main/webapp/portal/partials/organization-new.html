@@ -1,0 +1,53 @@
+<h1 style = "margin-bottom: 30px"><i class = "fa fa-plus fa-fw"></i> New Organization</h1>
+<div class = "modal-body row">
+
+    <form name = "newOrganizationForm" class = "box form-horizontal">
+        <div class = "form-group"
+             ng-class = "{ 'has-error': newOrganizationForm.name.$invalid && newOrganizationForm.name.$dirty,
+                                        'has-success': !newOrganizationForm.name.$invalid}">
+            <label for = "name"
+                   class = "col-sm-4 control-label">Name</label>
+
+            <div class = "col-sm-4">
+                <input id = "name"
+                       name = "name"
+                       class = "form-control"
+                       type = "text"
+                       placeholder = "enter your organization name"
+                       ng-model = "organizationName"
+                       ng-minlength = "3"
+                       ng-maxlength = "15"
+                       ng-required = "true"
+                       ng-pattern = "/[a-zA-Z0-9]*/"/>
+            </div>
+        </div>
+
+        <label for = "description"
+               class = "col-sm-4 control-label">Description</label>
+
+        <div class = "col-sm-4">
+            <input id = "description"
+                   name = "description"
+                   class = "form-control"
+                   type = "text"
+                   placeholder = "description"
+                   ng-model = "organizationDescription"/>
+        </div>
+
+        <div class = "col-sm-offset-5 col-sm-6">
+            <div class = "pull-left">
+                <input type = "button"
+                       class = "btn btn-success active pull-right"
+                       value = "OK"
+                       ng-disabled = "newOrganizationForm.$invalid"
+                       ng-click = "addOrganization(newOrganization)"/>
+            </div>
+            <div class = "pull-right">
+                <input type = "button"
+                       class = "btn btn-danger active"
+                       value = "Cancel"
+                       ng-click = "cancel()"/>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,45 @@
+<div class = "modal-header">
+    <h3 class = "modal-title">New Organization</h3>
+</div>
+<div class = "modal-body row">
+    <label class = "col-md-4 control-label">Organization</label>
+
+    <form name = "newUserForm" class = "box form-horizontal">
+        <div class = "form-group"
+             ng-class = "{ 'has-error': newOrgaForm.name.$invalid && newOrgaForm.name.$dirty,
+                                        'has-success': !newOrgaForm.name.$invalid}">
+            <label for = "name"
+                   class = "col-sm-4 control-label">Username</label>
+
+            <div class = "col-sm-8">
+                <input id = "name"
+                       name = "name"
+                       class = "form-control"
+                       type = "text"
+                       placeholder = "enter your organization name"
+                       ng-model = "organizationName"
+                       ng-minlength = "3"
+                       ng-maxlength = "15"
+                       ng-required = "true"
+                       ng-pattern = "/[a-zA-Z0-9]*/"/>
+            </div>
+        </div>
+
+        <label for = "description"
+               class = "col-sm-4 control-label">Description</label>
+
+        <div class = "col-sm-8">
+            <input id = "description"
+                   name = "description"
+                   class = "form-control"
+                   type = "text"
+                   placeholder = "description"
+                   ng-model = "organizationDescription"/>
+        </div>
+    </form>
+</div>
+
+<div class = "modal-footer">
+    <button class = "btn btn-primary" ng-disabled = "newOrgaForm.$invalid" ng-click = "ok()">OK</button>
+    <button class = "btn btn-default" ng-click = "cancel()">Cancel</button>
+</div>

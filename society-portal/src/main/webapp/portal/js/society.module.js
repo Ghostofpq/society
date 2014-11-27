@@ -82,6 +82,34 @@ var societyModule = angular.module("society", ["authentication"])
                     updateUserLogin: function(id,login){
                         var url = baseUrl + "users/" + id + "/login";
                         return $http.put(url, login);
+                    },
+
+                    createOrganization: function(name,description,owner){
+                        var url = baseUrl + "organizations";
+                        var organizationCreationRequest={};
+                        organizationCreationRequest.name=name;
+                        organizationCreationRequest.description=description;
+                        organizationCreationRequest.owner=owner;
+                        console.log(organizationCreationRequest)
+                        return $http.post(url, organizationCreationRequest);
+                    },
+
+                    getOrganizations:function(name,user,page,size){
+                        var url = baseUrl + "organizations";
+                        var p = params();
+                        if(!angular.isUndefined(name)){
+                            p.add("name", name);
+                        }
+                        if(!angular.isUndefined(user)){
+                            p.add("user", user);
+                        }
+                        if(!angular.isUndefined(page) && page>=0){
+                            p.add("page", page);
+                        }
+                        if(!angular.isUndefined(size) && size>=0){
+                            p.add("size", size);
+                        }
+                        return $http.get(url+ p.toString());
                     }
                 }
             }

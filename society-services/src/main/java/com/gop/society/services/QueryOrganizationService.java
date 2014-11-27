@@ -24,12 +24,18 @@ public class QueryOrganizationService {
     private MongoTemplate mongoTemplate;
 
     public Pageable<Organization> getByParameters(final String name,
+                                                  final String user,
                                                   final int page,
                                                   final int size) throws CustomNotFoundException {
         final Query query = new Query();
 
         if (!Strings.isNullOrEmpty(name)) {
             Criteria criteria = Criteria.where("name").is(name);
+            query.addCriteria(criteria);
+        }
+
+        if (!Strings.isNullOrEmpty(user)) {
+            Criteria criteria = Criteria.where("members").in(user);
             query.addCriteria(criteria);
         }
 
