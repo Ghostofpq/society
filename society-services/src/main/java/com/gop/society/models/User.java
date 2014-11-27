@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author GhostOfPQ
@@ -28,5 +29,5 @@ public class User {
 
     private List<UserRole> userRoles;
 
-    private List<String> accountIds;
+    private Set<String> accounts;
 }

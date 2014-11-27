@@ -5,7 +5,9 @@ import com.gop.society.exceptions.CustomAccountNotFoundForIdException;
 import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.Account;
+import com.gop.society.models.Currency;
 import com.gop.society.repositories.AccountRepository;
+import com.gop.society.utils.AccountVOUserView;
 import com.gop.society.utils.Pageable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ public class AccountService {
 
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private CurrencyService currencyService;
 
     public Account add(Account account) throws CustomBadRequestException {
         try {
@@ -31,10 +35,31 @@ public class AccountService {
         }
     }
 
+    public Account findByOwnerAndCurrency(final String owner, final String currency) throws CustomNotFoundException {
+        final Account account = accountRepository.findFirstByOwnerAndCurrency(owner, currency);
+        if (account != null) {
+            return account;
+        }
+        throw new CustomAccountNotFoundForIdException(owner);
+    }
+
     public Account get(final String id) throws CustomNotFoundException {
         final Account account = accountRepository.findOne(id);
         if (account != null) {
             return account;
+        }
+        throw new CustomAccountNotFoundForIdException(id);
+    }
+
+    public AccountVOUserView getVOUserView(final String id) throws CustomNotFoundException {
+        final Account account = accountRepository.findOne(id);
+        if (account != null) {
+            final Currency currency = currencyService.get(account.getCurrency());
+            final AccountVOUserView accountVOUserView = new AccountVOUserView();
+            accountVOUserView.setBalance(account.getBalance());
+            accountVOUserView.setCurrencyName(currency.getName());
+            accountVOUserView.setCurrencyId(currency.getId());
+            return accountVOUserView;
         }
         throw new CustomAccountNotFoundForIdException(id);
     }

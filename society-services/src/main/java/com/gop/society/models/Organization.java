@@ -5,7 +5,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -23,5 +22,6 @@ public class Organization {
     private Set<String> admins;
     private Set<String> members;
 
-    private List<String> accountIds;
+    private Set<String> accounts;
+    private Set<String> managedCurrencies;
 }

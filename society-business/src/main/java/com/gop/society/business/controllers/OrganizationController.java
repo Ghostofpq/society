@@ -1,25 +1,23 @@
 package com.gop.society.business.controllers;
 
-import com.google.common.base.Strings;
 import com.gop.society.exceptions.CustomBadRequestException;
+import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
-import com.gop.society.models.Account;
-import com.gop.society.models.Currency;
 import com.gop.society.models.Organization;
 import com.gop.society.services.CurrencyService;
 import com.gop.society.services.OrganizationService;
+import com.gop.society.services.UserService;
 import com.gop.society.utils.OrganizationCreationRequest;
+import com.gop.society.utils.OrganizationVO;
+import com.gop.society.utils.Pageable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -32,6 +30,8 @@ import java.util.HashSet;
 public class OrganizationController {
     @Autowired
     private OrganizationService organizationService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private CurrencyService currencyService;
 
@@ -51,22 +51,147 @@ public class OrganizationController {
         organization.setName(organizationToCreate.getName());
         // Set Desc
         organization.setDescription(organizationToCreate.getDescription());
-
-        organization.setAccountIds(new ArrayList<String>());
-
+        // Init lists
         organization.setAdmins(new HashSet<String>());
-        organization.getAdmins().add(organizationToCreate.getCreatorId());
-
-        if (!Strings.isNullOrEmpty(organizationToCreate.getCurrency())) {
-            log.debug("Creating a currency named {}", organizationToCreate.getCurrency());
-            Currency currency = new Currency(organizationToCreate.getCurrency());
-            currency = currencyService.add(currency);
-            Account account = currencyService.createAccount(currency.getId(), (organizationToCreate.getQuantity() != null ? organizationToCreate.getQuantity() : 0l));
-            organization.getAccountIds().add(account.getId());
-        }
-
+        organization.setMembers(new HashSet<String>());
+        organization.setAccounts(new HashSet<String>());
+        organization.setManagedCurrencies(new HashSet<String>());
+        // Add creator as admin and member
+        organization.getAdmins().add(organizationToCreate.getCreator());
+        organization.getMembers().add(organizationToCreate.getCreator());
         // Save
         return organizationService.add(organization);
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public OrganizationVO get(
+            @PathVariable("id") final String id)
+            throws CustomNotFoundException {
+        return organizationService.getVO(id);
+    }
+
+    @RequestMapping(value = "/{id}/name", method = RequestMethod.PUT)
+    @ResponseBody
+    public Organization updateName(
+            @PathVariable("id") final String id,
+            @RequestBody final String name)
+            throws CustomNotFoundException,
+            CustomBadRequestException {
+        Organization organization = organizationService.get(id);
+        organization.setName(name);
+        return organizationService.update(organization);
+    }
+
+    @RequestMapping(value = "/{id}/description", method = RequestMethod.PUT)
+    @ResponseBody
+    public Organization updateDescription(
+            @PathVariable("id") final String id,
+            @RequestBody final String description)
+            throws CustomNotFoundException,
+            CustomBadRequestException {
+        Organization organization = organizationService.get(id);
+        organization.setDescription(description);
+        return organizationService.update(organization);
+    }
+
+    @RequestMapping(value = "/{id}/members", method = RequestMethod.POST)
+    @ResponseBody
+    public Organization addMember(
+            @PathVariable("id") final String id,
+            @RequestBody final String userId)
+            throws CustomNotFoundException,
+            CustomBadRequestException {
+        Organization organization = organizationService.get(id);
+        userService.get(userId);
+        organization.getMembers().add(userId);
+        return organizationService.update(organization);
+    }
+
+    @RequestMapping(value = "/{id}/members/{memberId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public Organization removeMember(
+            @PathVariable("id") final String id,
+            @PathVariable("memberId") final String memberId)
+            throws CustomNotFoundException,
+            CustomBadRequestException {
+        Organization organization = organizationService.get(id);
+        userService.get(memberId);
+        organization.getMembers().remove(memberId);
+        return organizationService.update(organization);
+    }
+
+    @RequestMapping(value = "/{id}/admins", method = RequestMethod.POST)
+    @ResponseBody
+    public Organization addAdmin(
+            @PathVariable("id") final String id,
+            @RequestBody final String userId)
+            throws CustomNotFoundException,
+            CustomBadRequestException {
+        Organization organization = organizationService.get(id);
+        userService.get(userId);
+        organization.getAdmins().add(userId);
+        return organizationService.update(organization);
+    }
+
+    @RequestMapping(value = "/{id}/admins/{adminId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public Organization removeAdmin(
+            @PathVariable("id") final String id,
+            @PathVariable("adminId") final String adminId)
+            throws CustomNotFoundException,
+            CustomBadRequestException {
+        Organization organization = organizationService.get(id);
+        userService.get(adminId);
+        organization.getAdmins().remove(adminId);
+        return organizationService.update(organization);
+    }
+
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void delete(
+            @PathVariable("id") final String id)
+            throws CustomNotFoundException {
+        organizationService.delete(id);
+    }
+
+    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @ResponseBody
+    public Pageable<Organization> getByParameters(
+            @RequestParam(value = "page", required = false, defaultValue = "0") final Integer pageNumber,
+            @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size) {
+        return organizationService.getAll(pageNumber, size);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CustomNotFoundException.class)
+    @ResponseBody
+    private String handleNotFoundException(CustomNotFoundException e) {
+        log.error(HttpStatus.NOT_FOUND + ":" + e.getMessage());
+        return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(CustomNotAuthorizedException.class)
+    @ResponseBody
+    private String handleNotAuthorizedException(CustomNotAuthorizedException e) {
+        log.error(HttpStatus.FORBIDDEN + ":" + e.getMessage());
+        return e.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CustomBadRequestException.class)
+    @ResponseBody
+    private String handleBadRequestException(CustomBadRequestException e) {
+        log.error(HttpStatus.BAD_REQUEST + ":" + e.getMessage());
+        return e.getMessage();
+    }
+    // if (!Strings.isNullOrEmpty(organizationToCreate.getCurrency())) {
+    //     log.debug("Creating a currency named {}", organizationToCreate.getCurrency());
+    //     Currency currency = new Currency(organizationToCreate.getCurrency());
+    //     currency = currencyService.add(currency);
+    //     Account account = currencyService.createAccount(currency.getId(), (organizationToCreate.getQuantity() != null ? organizationToCreate.getQuantity() : 0l));
+    //     organization.getAccounts().add(account.getId());
+    // }
 }

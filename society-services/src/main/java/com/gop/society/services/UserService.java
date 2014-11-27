@@ -7,6 +7,7 @@ import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.utils.EmailValidator;
 import com.gop.society.utils.Pageable;
+import com.gop.society.utils.UserOrgaVO;
 import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,12 +71,31 @@ public class UserService {
         throw new CustomUserNotFoundForIdException(id);
     }
 
+    public UserOrgaVO getOrgaVO(final String id) throws CustomNotFoundException {
+        final User user = userRepository.findOne(id);
+        if (user != null) {
+            UserOrgaVO orgaVO = new UserOrgaVO();
+            orgaVO.setId(user.getId());
+            orgaVO.setLogin(user.getLogin());
+            return orgaVO;
+        }
+        throw new CustomUserNotFoundForIdException(id);
+    }
+
     public User getByLogin(final String login) throws CustomNotFoundException {
         final User user = userRepository.findByLogin(login);
         if (user != null) {
             return user;
         }
         throw new CustomUserNotFoundForLoginException(login);
+    }
+
+    public User update(User user) throws CustomBadRequestException {
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new CustomBadRequestException("Could not save new user.");
+        }
     }
 
     public User updateLogin(final String id, final String newLogin)

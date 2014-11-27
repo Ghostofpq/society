@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 @Component("accountRepository")
 @Repository
 public interface AccountRepository extends PagingAndSortingRepository<Account, String> {
+    public Account findFirstByOwnerAndCurrency(String owner, String currency);
 }

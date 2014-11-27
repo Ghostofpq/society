@@ -7,6 +7,7 @@ import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.Account;
 import com.gop.society.models.Currency;
 import com.gop.society.repositories.CurrencyRepository;
+import com.gop.society.utils.CurrencyVOUserView;
 import com.gop.society.utils.Pageable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,36 +43,24 @@ public class CurrencyService {
         throw new CustomCurrencyNotFoundForIdException(id);
     }
 
+    public CurrencyVOUserView getVOUserView(final String id) throws CustomNotFoundException {
+        final Currency currency = currencyRepository.findOne(id);
+        if (currency != null) {
+            final CurrencyVOUserView currencyVOUserView = new CurrencyVOUserView();
+            currencyVOUserView.setId(currency.getId());
+            currencyVOUserView.setName(currency.getName());
+            return currencyVOUserView;
+        }
+        throw new CustomCurrencyNotFoundForIdException(id);
+    }
+
     public Currency update(final Currency currency) throws CustomNotFoundException {
         return currencyRepository.save(currency);
     }
 
-    public Account createAccount(final String idCurrency, final Long quantity) throws CustomBadRequestException, CustomNotFoundException {
-        Currency currency = get(idCurrency);
-
-        Account account = new Account(idCurrency);
-        account = accountService.add(account);
-
-        currency.getAccountIds().add(account.getId());
-        update(currency);
-        generateMoney(idCurrency, account.getId(), quantity);
-
-        return account;
-    }
-
-
-    public void transfert(final String idCurrency, final String idGiver, final String idReceiver, final Long quantity) throws CustomBadRequestException, CustomNotFoundException {
-        Currency currency = get(idCurrency);
-
-        if (!currency.getAccountIds().contains(idGiver)) {
-            throw new CustomBadRequestException("[" + idGiver + "] is not an account of [" + currency.getName() + "]!");
-        }
-        if (!currency.getAccountIds().contains(idReceiver)) {
-            throw new CustomBadRequestException("[" + idReceiver + "] is not an account of [" + currency.getName() + "]!");
-        }
-
-        Account accountGiver = accountService.get(idGiver);
-        Account accountReceiver = accountService.get(idReceiver);
+    public void transfer(Currency currency, final String idGiver, final String idReceiver, final Long quantity) throws CustomBadRequestException, CustomNotFoundException {
+        Account accountReceiver = accountService.findByOwnerAndCurrency(idReceiver,currency.getId());
+        Account accountGiver = accountService.findByOwnerAndCurrency(idGiver,currency.getId());
 
         if (accountGiver.getBalance() >= quantity) {
             accountGiver.setBalance(accountGiver.getBalance() - quantity);
@@ -83,37 +72,25 @@ public class CurrencyService {
         }
     }
 
-    public void generateMoney(final String idCurrency, final String idReceiver, final Long quantity) throws CustomBadRequestException, CustomNotFoundException {
-        Currency currency = get(idCurrency);
-
-        if (!currency.getAccountIds().contains(idReceiver)) {
-            throw new CustomBadRequestException("[" + idReceiver + "] is not an account of [" + currency.getName() + "]!");
-        }
-
-        Account accountReceiver = accountService.get(idReceiver);
-        accountReceiver.setBalance(accountReceiver.getBalance() + quantity);
+    public void generate(Currency currency, final String idReceiver, final Long balance) throws CustomBadRequestException, CustomNotFoundException {
+        Account accountReceiver = accountService.findByOwnerAndCurrency(idReceiver,currency.getId());
+        accountReceiver.setBalance(accountReceiver.getBalance() + balance);
         accountService.update(accountReceiver);
 
-        currency.setTotal(currency.getTotal() + quantity);
+        currency.setTotal(currency.getTotal() + balance);
         update(currency);
     }
 
-    public void destroyMoney(final String idCurrency, final String idGiver, final Long quantity) throws CustomBadRequestException, CustomNotFoundException {
-        Currency currency = get(idCurrency);
-
-        if (!currency.getAccountIds().contains(idGiver)) {
-            throw new CustomBadRequestException("[" + idGiver + "] is not an account of [" + currency.getName() + "]!");
-        }
-
-        Account accountGiver = accountService.get(idGiver);
-        if (accountGiver.getBalance() >= quantity) {
-            accountGiver.setBalance(accountGiver.getBalance() - quantity);
+    public void destroy(Currency currency, final String idGiver, final Long balance) throws CustomBadRequestException, CustomNotFoundException {
+        Account accountGiver = accountService.findByOwnerAndCurrency(idGiver,currency.getId());
+        if (accountGiver.getBalance() >= balance) {
+            accountGiver.setBalance(accountGiver.getBalance() - balance);
             accountService.update(accountGiver);
         } else {
-            throw new CustomBadRequestException("[" + idGiver + "] cannot destroy [" + quantity + "], insufficient funds!");
+            throw new CustomBadRequestException("[" + idGiver + "] cannot destroy [" + balance + "], insufficient funds!");
         }
 
-        currency.setTotal(currency.getTotal() - quantity);
+        currency.setTotal(currency.getTotal() - balance);
         update(currency);
     }
 
