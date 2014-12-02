@@ -101,10 +101,16 @@ public class UserController {
     @ResponseBody
     public User updateLogin(
             @PathVariable("id") final String id,
-            @RequestBody final String login)
+            @RequestBody final String login,
+            @RequestHeader("currentUser") final String currentUser,
+            @RequestHeader("isAdmin") final boolean isAdmin)
             throws CustomNotFoundException,
-            CustomBadRequestException {
-        return userService.updateLogin(id, login);
+            CustomBadRequestException,
+            CustomNotAuthorizedException {
+        if (isAdmin || id.equals(currentUser)) {
+            return userService.updateLogin(id, login);
+        }
+        throw new CustomNotAuthorizedException();
     }
 
     @RequestMapping(value = "/{id}/password", method = RequestMethod.PUT)

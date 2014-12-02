@@ -48,6 +48,7 @@ app
 				redirectTo: '/dashboard'
 			});
 	})
+
     .config(function($societyProvider){
         $societyProvider.baseUrl("/api/");
     })

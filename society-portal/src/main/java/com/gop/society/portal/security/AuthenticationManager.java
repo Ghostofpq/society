@@ -34,7 +34,6 @@ public class AuthenticationManager implements AuthenticationProvider {
         passwordEncoder = new ShaPasswordEncoder(256);
     }
 
-
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
         log.debug("authenticate: {}", authentication.toString());

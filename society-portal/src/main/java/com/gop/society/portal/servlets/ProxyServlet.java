@@ -1,6 +1,11 @@
 package com.gop.society.portal.servlets;
 
+import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -22,11 +27,9 @@ import java.util.*;
  */
 @Slf4j
 public class ProxyServlet extends HttpServlet {
-
     // *************
     // static
     // *************
-
     private static final long serialVersionUID = 9871654661L;
 
     /**
@@ -80,7 +83,7 @@ public class ProxyServlet extends HttpServlet {
             try {
                 InputStream in = this.getClass().getClassLoader().getResourceAsStream(initParamProperties);
                 if (in == null) {
-                    throw new IOException("properties file '"+initParamProperties+"' not found");
+                    throw new IOException("properties file '" + initParamProperties + "' not found");
                 }
                 props.load(in);
                 this.baseRemoteUrl = props.getProperty(initParambaseRemotUrlPropKey);
@@ -191,14 +194,17 @@ public class ProxyServlet extends HttpServlet {
                 String headerName = e.nextElement().toString();
                 if (!this.headers.containsKey(headerName)) {
                     httpConn.setRequestProperty(headerName, request.getHeader(headerName));
+                    log.debug("{} : {}", headerName, request.getHeader(headerName));
                 }
             }
-
+            httpConn.setRequestProperty("currentUser", getAuthenticatedUser());
+            log.debug("currentUser : {}", getAuthenticatedUser());
+            httpConn.setRequestProperty("isAdmin", String.valueOf(isAdmin()));
+            log.debug("isAdmin : {}", String.valueOf(isAdmin()));
             // custom headers
             for (Map.Entry<String, String> entry : this.headers.entrySet()) {
                 httpConn.setRequestProperty(entry.getKey(), entry.getValue());
             }
-
             // connect...
             httpConn.connect();
 
@@ -252,14 +258,14 @@ public class ProxyServlet extends HttpServlet {
             }
 
             // Response Body
-            BufferedInputStream webToProxyBuf=null;
+            BufferedInputStream webToProxyBuf = null;
             try {
                 webToProxyBuf = new BufferedInputStream(httpConn.getInputStream());
-            }catch (IOException e) {
+            } catch (IOException e) {
                 webToProxyBuf = new BufferedInputStream(httpConn.getErrorStream());
             }
 
-            BufferedOutputStream  proxyToClientBuf = new BufferedOutputStream(response.getOutputStream());
+            BufferedOutputStream proxyToClientBuf = new BufferedOutputStream(response.getOutputStream());
             // buffer size 4Ko
             byte[] buff = new byte[BUFFER_SIZE];
             int len;
@@ -288,6 +294,26 @@ public class ProxyServlet extends HttpServlet {
                 httpConn.disconnect();
             }
         }
+    }
+
+
+    private String getAuthenticatedUser() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        } else {
+            if (authentication instanceof UsernamePasswordAuthenticationToken) {
+                final UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
+                return (String) usernamePasswordAuthenticationToken.getPrincipal();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    private boolean isAdmin() {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication != null && authentication.isAuthenticated() && authentication.getAuthorities().contains(new SimpleGrantedAuthority(UserRole.ADMIN.toString()));
     }
 
 }
