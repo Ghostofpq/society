@@ -18,7 +18,7 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!--UTF-8-->
+    <!-- UTF-8 -->
     <filter>
         <filter-name>encoding-filter</filter-name>
         <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -36,7 +36,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!--BUSINESS-->
+    <!-- Business -->
     <servlet>
         <servlet-name>society-business</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -47,7 +47,7 @@
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 
-    <!--SECURITY
+    <!-- Spring Security -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -55,5 +55,9 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
-    </filter-mapping>       -->
+    </filter-mapping>
+    <session-config>
+        <session-timeout>0</session-timeout>
+    </session-config>
+
 </web-app>

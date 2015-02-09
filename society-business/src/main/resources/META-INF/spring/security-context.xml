@@ -9,24 +9,16 @@
 
     <!-- Authorize User creation and get User -->
     <http pattern="/api/users" security="none"/>
-    <http pattern="/portal/register.html" security="none"/>
-    <http pattern="/portal/login.html" security="none"/>
 
     <http>
-        <intercept-url pattern="/portal/index.html" access="ROLE_USER"/>
         <intercept-url pattern="/api/**" access="ROLE_USER"/>
 
         <form-login login-processing-url="/session/login"
-                    password-parameter="password"
                     username-parameter="username"
-                    login-page="/portal/login.html"
-                    authentication-failure-url="/portal/login.html?err=1"
-                    default-target-url="/portal/index.html"
-                    always-use-default-target="true"/>
+                    password-parameter="password"/>
         <logout logout-url="/session/logout"
                 invalidate-session="true"
-                delete-cookies="true"
-                logout-success-url="/portal/login.html"/>
+                delete-cookies="true"/>
     </http>
     <authentication-manager>
         <authentication-provider ref='authenticationManager'/>
