@@ -15,6 +15,7 @@
     <mvc:annotation-driven/>
     <aop:aspectj-autoproxy/>
     <context:component-scan base-package="com.gop.society"/>
+    <context:property-placeholder location="classpath:application.properties"/>
     <import resource="classpath:META-INF/spring/mongo-context.xml"/>
     <import resource="classpath:META-INF/spring/security-context.xml"/>
 
