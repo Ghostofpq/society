@@ -17,4 +17,7 @@
     <context:component-scan base-package="com.gop.society"/>
     <import resource="classpath:META-INF/spring/mongo-context.xml"/>
     <import resource="classpath:META-INF/spring/security-context.xml"/>
+
+    <bean class="com.gop.society.business.utils.SwaggerConfig"/>
+    <bean class="com.mangofactory.swagger.configuration.SpringSwaggerConfig"/>
 </beans>

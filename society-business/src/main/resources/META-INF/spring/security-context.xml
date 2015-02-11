@@ -9,10 +9,10 @@
 
     <!-- Authorize User creation and get User -->
     <http pattern="/api/users" security="none"/>
+    <http pattern="/api/api-docs/**" security="none"/>
 
     <http>
         <intercept-url pattern="/api/**" access="ROLE_USER"/>
-
         <form-login login-processing-url="/session/login"
                     username-parameter="username"
                     password-parameter="password"/>
