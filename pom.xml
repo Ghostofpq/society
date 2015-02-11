@@ -48,6 +48,14 @@
         <spring.data.mongodb.version>1.6.0.RELEASE</spring.data.mongodb.version>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>jcenter-release</id>
+            <name>jcenter</name>
+            <url>http://oss.jfrog.org/artifactory/oss-release-local/</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -118,11 +126,15 @@
                 <version>2.4.3</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.mangofactory</groupId>
+                <artifactId>swagger-springmvc</artifactId>
+                <version>0.9.5</version>
+            </dependency>
             <!-- Servlet API -->
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-
                 <version>3.0.1</version>
             </dependency>
 
