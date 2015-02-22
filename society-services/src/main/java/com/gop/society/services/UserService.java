@@ -10,6 +10,7 @@ import com.gop.society.utils.Pageable;
 import com.gop.society.utils.UserOrgaVO;
 import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,6 +58,8 @@ public class UserService {
 
     public User add(User user) throws CustomBadRequestException {
         try {
+            user.setCreationTs(DateTime.now().getMillis());
+            user.setUpdateTs(DateTime.now().getMillis());
             return userRepository.save(user);
         } catch (Exception e) {
             throw new CustomBadRequestException("Could not save new user.");
@@ -92,6 +95,7 @@ public class UserService {
 
     public User update(User user) throws CustomBadRequestException {
         try {
+            user.setUpdateTs(DateTime.now().getMillis());
             return userRepository.save(user);
         } catch (Exception e) {
             throw new CustomBadRequestException("Could not save new user.");
@@ -117,7 +121,7 @@ public class UserService {
         r.nextBytes(salt);
         // Encode Password
         user.setSalt(new String(salt));
-        user.setPassword(encodePassword(newPassword, user.getSalt()));
+        user.setEncodedPassword(encodePassword(newPassword, user.getSalt()));
         return userRepository.save(user);
     }
 

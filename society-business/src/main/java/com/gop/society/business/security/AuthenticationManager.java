@@ -50,7 +50,7 @@ public class AuthenticationManager implements AuthenticationProvider {
         }
 
         final String encodedPassword = passwordEncoder.encodePassword(authentication.getCredentials().toString(), user.getSalt());
-        if (user.getPassword().equals(encodedPassword)) {
+        if (user.getEncodedPassword().equals(encodedPassword)) {
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             for (final UserRole role : user.getUserRoles()) {
                 grantedAuths.add(new SimpleGrantedAuthority(role.toString()));

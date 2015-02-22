@@ -15,7 +15,7 @@
         <intercept-url pattern="/api/**" access="ROLE_USER"/>
         <form-login login-processing-url="/session/login"
                     username-parameter="username"
-                    password-parameter="password"/>
+                    password-parameter="encodedPassword"/>
         <logout logout-url="/session/logout"
                 invalidate-session="true"
                 delete-cookies="true"/>

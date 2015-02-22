@@ -17,10 +17,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 
 /**
@@ -52,13 +51,8 @@ public class UserController {
         user.setLogin(userToCreate.getLogin());
         // Set Email
         user.setEmail(userToCreate.getEmail());
-        // Generate Salt
-        final Random r = new SecureRandom();
-        byte[] salt = new byte[32];
-        r.nextBytes(salt);
-        // Encode Password
-        user.setSalt(new String(salt));
-        user.setPassword(userService.encodePassword(userToCreate.getPassword(), user.getSalt()));
+        // Set Password
+        user.setPassword(userToCreate.getPassword());
         // Set basic Role
         final List<UserRole> roles = new ArrayList<>();
         roles.add(UserRole.USER);
@@ -70,51 +64,57 @@ public class UserController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-
     public User get(
             @PathVariable("id") final String id)
             throws CustomNotFoundException {
-
+        log.debug("get({})", id);
         return userService.get(id);
     }
 
-    @RequestMapping(value = "/{id}/login", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseBody
-    public User updateLogin(
+    public User update(
             @PathVariable("id") final String id,
-            @RequestBody final String login)
+            @RequestBody final Map<String, Object> fields)
             throws CustomNotFoundException,
             CustomBadRequestException,
             CustomNotAuthorizedException {
-        if (authenticationManager.isAdmin() || id.equals(authenticationManager.getAuthenticatedUser())) {
-            return userService.updateLogin(id, login);
+        final User user = userService.get(id);
+        for (final String key : fields.keySet()) {
+            updateFieldForUser(user, key, fields.get(key));
         }
-        throw new CustomNotAuthorizedException();
+        return userService.update(user);
     }
 
-    @RequestMapping(value = "/{id}/password", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{id}/{field}", method = RequestMethod.PUT)
     @ResponseBody
-    public User updatePassword(
+    public User updateField(
             @PathVariable("id") final String id,
-            @RequestBody final String newPassword)
+            @PathVariable("field") final String field,
+            @RequestBody final Object value)
             throws CustomNotFoundException,
             CustomBadRequestException,
             CustomNotAuthorizedException {
-        if (authenticationManager.isAdmin() || id.equals(authenticationManager.getAuthenticatedUser())) {
-            return userService.updatePassword(id, newPassword);
-        }
-        throw new CustomNotAuthorizedException();
+        final User user = userService.get(id);
+        updateFieldForUser(user, field, value);
+        return userService.update(user);
     }
 
-
-    @RequestMapping(value = "/{id}/email", method = RequestMethod.PUT)
-    @ResponseBody
-    public User updateEmail(
-            @PathVariable("id") final String id,
-            @RequestBody final String email)
-            throws CustomNotFoundException,
-            CustomBadRequestException {
-        return userService.updateEmail(id, email);
+    private void updateFieldForUser(final User user, final String field, final Object value) {
+        switch (field) {
+            case User.FIELD_LOGIN:
+                user.setLogin((String) value);
+                break;
+            case User.FIELD_PASSWORD:
+                user.setPassword((String) value);
+                break;
+            case User.FIELD_EMAIL:
+                user.setEmail((String) value);
+                break;
+            default:
+                log.error("Unknown field {}", field);
+                break;
+        }
     }
 
     @RequestMapping(value = "/{id}/roles", method = RequestMethod.PUT)
