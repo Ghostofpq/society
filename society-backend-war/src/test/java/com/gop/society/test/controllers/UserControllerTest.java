@@ -56,7 +56,6 @@ public class UserControllerTest {
 
     @Test
     public void findOneUserShouldReturnOneUser() throws Exception {
-
         final User mockedUser = new User();
         mockedUser.setId("aze");
         mockedUser.setEmail("em@ai.l");
@@ -66,14 +65,22 @@ public class UserControllerTest {
         when(userRepository.findOne("aze")).thenReturn(mockedUser);
         when(authenticationManager.getAuthenticatedUserId()).thenReturn("aze");
 
-        log.debug(userController.get("aze").toString());
-
         mockMvc.perform(get("/users/aze"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is("aze")))
                 .andExpect(jsonPath("$.login", is("login")))
                 .andExpect(jsonPath("$.email", is("em@ai.l")));
+    }
+
+    @Test
+    public void findOneUserShouldReturn404WhenUserIsNotFound() throws Exception {
+        when(userRepository.findOne("aze")).thenReturn(null);
+        when(authenticationManager.getAuthenticatedUserId()).thenReturn("aze");
+
+
+        mockMvc.perform(get("/users/aze"))
+                .andExpect(status().is(404));
     }
 
 }
