@@ -1,10 +1,10 @@
 package com.gop.society.controllers;
 
-import com.gop.society.security.AuthenticationManager;
 import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
+import com.gop.society.security.AuthenticationManager;
 import com.gop.society.services.UserService;
 import com.gop.society.utils.Pageable;
 import com.gop.society.utils.UserCreationRequest;
