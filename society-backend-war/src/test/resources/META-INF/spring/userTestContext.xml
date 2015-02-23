@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:mockito="http://www.mockito.org/spring/mockito"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                http://www.springframework.org/schema/beans/spring-beans.xsd
+                http://www.springframework.org/schema/context
+                http://www.springframework.org/schema/context/spring-context.xsd
+                http://www.springframework.org/schema/mvc
+                http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		        http://www.springframework.org/schema/aop
+		        http://www.springframework.org/schema/aop/spring-aop.xsd
+                http://www.mockito.org/spring/mockito
+                http://www.mockito.org/spring/mockito.xsd">
+    <mvc:annotation-driven/>
+    <aop:aspectj-autoproxy/>
+    <context:annotation-config/>
+
+    <mockito:mock id="userRepository" class="com.gop.society.repositories.UserRepository"/>
+    <mockito:mock id="accountRepository" class="com.gop.society.repositories.AccountRepository"/>
+    <mockito:mock id="currencyRepository" class="com.gop.society.repositories.CurrencyRepository"/>
+    <mockito:mock id="organizationRepository" class="com.gop.society.repositories.OrganizationRepository"/>
+    <mockito:mock id="authenticationManager" class="com.gop.society.security.AuthenticationManager"/>
+    <mockito:mock id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate"/>
+
+    <context:component-scan base-package="com.gop.society.services"/>
+    <context:component-scan base-package="com.gop.society.exceptions"/>
+    <context:component-scan base-package="com.gop.society.models"/>
+    <context:component-scan base-package="com.gop.society.security"/>
+    <context:component-scan base-package="com.gop.society.controllers"/>
+</beans>

@@ -8,9 +8,8 @@
     <artifactId>society</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
-        <module>society-business</module>
-        <module>society-portal</module>
-        <module>society-services</module>
+        <module>society-backend-lib</module>
+        <module>society-backend-war</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -60,12 +59,12 @@
         <dependencies>
             <dependency>
                 <groupId>com.gop.society</groupId>
-                <artifactId>society-services</artifactId>
+                <artifactId>society-backend-lib</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.gop.society</groupId>
-                <artifactId>society-business</artifactId>
+                <artifactId>society-backend-war</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -189,12 +188,6 @@
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path-assert</artifactId>
                 <version>0.8.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test-mvc</artifactId>
-                <version>1.0.0.M2</version>
                 <scope>test</scope>
             </dependency>
             <!-- utils -->
