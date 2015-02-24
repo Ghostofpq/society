@@ -1,0 +1,10 @@
+com\gop\society\utils\SwaggerConfig.class
+com\gop\society\security\AuthenticationManager.class
+com\gop\society\security\SecurityAspect.class
+com\gop\society\controllers\AccountController.class
+com\gop\society\controllers\CurrencyController.class
+com\gop\society\controllers\OrganizationController.class
+com\gop\society\utils\CorsFilter.class
+com\gop\society\controllers\UserController.class
+com\gop\society\controllers\CurrencyController$1.class
+com\gop\society\utils\SwaggerConfig$1.class

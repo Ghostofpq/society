@@ -1,5 +1,4 @@
 .idea
 *.iml
-society-portal/target
-society-business/target
-society-services/target
+society-backend-lib/target
+society-backend-war/target

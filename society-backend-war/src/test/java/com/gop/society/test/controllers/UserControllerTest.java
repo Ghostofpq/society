@@ -1,12 +1,15 @@
 package com.gop.society.test.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gop.society.controllers.UserController;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
-import com.gop.society.security.AuthenticationManager;
+import com.gop.society.utils.UserCreationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,11 +20,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -34,8 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
     @Autowired
     private UserController userController;
@@ -55,32 +59,93 @@ public class UserControllerTest {
     );
 
     @Test
+    public void createUserShouldGoFine() throws Exception {
+        final String testEmail = "em@ai.l";
+        final String testLogin = "login";
+        final String testPwd = "password";
+
+        final UserCreationRequest userCreationRequest = new UserCreationRequest();
+        userCreationRequest.setEmail(testEmail);
+        userCreationRequest.setLogin(testLogin);
+        userCreationRequest.setPassword(testPwd);
+
+        when(userRepository.save(any(User.class))).thenAnswer(new Answer<User>() {
+            @Override
+            public User answer(InvocationOnMock invocation) throws Throwable {
+                Object[] args = invocation.getArguments();
+                return (User) args[0];
+            }
+        });
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        mapper.writeValue(os, userCreationRequest);
+        final String asJSON = os.toString();
+        os.close();
+        mockMvc.perform(post("/users/").content(asJSON).contentType(APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$.login", is(testLogin)))
+                .andExpect(jsonPath("$.email", is(testEmail)));
+    }
+
+    @Test
+    public void createUserShouldGoWrong() throws Exception {
+        final String testEmail = "em@ai.l";
+        final String testLogin = "login";
+        final String testPwd = "password";
+
+        final UserCreationRequest userCreationRequest = new UserCreationRequest();
+        userCreationRequest.setEmail(testEmail);
+        userCreationRequest.setLogin(testLogin);
+        userCreationRequest.setPassword(testPwd);
+
+        when(userRepository.save(any(User.class))).thenAnswer(new Answer<User>() {
+            @Override
+            public User answer(InvocationOnMock invocation) throws Throwable {
+                throw new Exception();
+            }
+        });
+
+        final ObjectMapper mapper = new ObjectMapper();
+        final ByteArrayOutputStream os = new ByteArrayOutputStream();
+        mapper.writeValue(os, userCreationRequest);
+        final String asJSON = os.toString();
+        os.close();
+        mockMvc.perform(post("/users/").content(asJSON).contentType(APPLICATION_JSON_UTF8))
+                .andExpect(status().is(400));
+    }
+
+    @Test
     public void findOneUserShouldReturnOneUser() throws Exception {
+        final String testId = "id";
+        final String testEmail = "em@ai.l";
+        final String testLogin = "login";
+        final String testPwd = "password";
+
         final User mockedUser = new User();
-        mockedUser.setId("aze");
-        mockedUser.setEmail("em@ai.l");
-        mockedUser.setLogin("login");
-        mockedUser.setPassword("password");
+        mockedUser.setId(testId);
+        mockedUser.setEmail(testEmail);
+        mockedUser.setLogin(testLogin);
+        mockedUser.setPassword(testPwd);
 
         when(userRepository.findOne("aze")).thenReturn(mockedUser);
-        when(authenticationManager.getAuthenticatedUserId()).thenReturn("aze");
 
         mockMvc.perform(get("/users/aze"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("$.id", is("aze")))
-                .andExpect(jsonPath("$.login", is("login")))
-                .andExpect(jsonPath("$.email", is("em@ai.l")));
+                .andExpect(jsonPath("$.id", is(testId)))
+                .andExpect(jsonPath("$.login", is(testLogin)))
+                .andExpect(jsonPath("$.email", is(testEmail)));
     }
 
     @Test
     public void findOneUserShouldReturn404WhenUserIsNotFound() throws Exception {
         when(userRepository.findOne("aze")).thenReturn(null);
-        when(authenticationManager.getAuthenticatedUserId()).thenReturn("aze");
-
 
         mockMvc.perform(get("/users/aze"))
                 .andExpect(status().is(404));
     }
+
 
 }
