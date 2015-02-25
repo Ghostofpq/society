@@ -5,6 +5,7 @@ import com.gop.society.controllers.UserController;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.security.CustomAuthenticationManager;
+import com.gop.society.test.config.MockedRepositoriesConfig;
 import com.gop.society.utils.UserCreationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(classes = MockedRepositoriesConfig.class)
 @ContextConfiguration(locations = "classpath*:META-INF/spring/userTestContext.xml")
 @WebAppConfiguration
 public class UserControllerTest {
