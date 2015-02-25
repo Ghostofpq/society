@@ -27,7 +27,7 @@ import java.util.HashSet;
  */
 @Slf4j
 @Controller
-@RequestMapping("/currencies")
+@RequestMapping("/api/currencies")
 @Component("currencyController")
 public class CurrencyController {
     @Autowired

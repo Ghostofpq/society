@@ -26,7 +26,7 @@ import java.util.List;
  */
 @Slf4j
 @Component("authenticationManager")
-public class AuthenticationManager implements AuthenticationProvider {
+public class CustomAuthenticationManager implements AuthenticationProvider {
     @Autowired
     private UserService userService;
 

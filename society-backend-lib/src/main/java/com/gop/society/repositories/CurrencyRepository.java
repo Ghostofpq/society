@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
  * @author GhostOfPQ
  */
 @Component("currencyRepository")
-@Repository
 public interface CurrencyRepository extends PagingAndSortingRepository<Currency, String> {
     public Currency findByName(final String name);
 }

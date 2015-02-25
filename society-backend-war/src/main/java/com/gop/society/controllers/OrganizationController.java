@@ -26,7 +26,7 @@ import java.util.HashSet;
  */
 @Slf4j
 @Controller
-@RequestMapping("/organizations")
+@RequestMapping("/api/organizations")
 @Component("organizationController")
 public class OrganizationController {
     @Autowired

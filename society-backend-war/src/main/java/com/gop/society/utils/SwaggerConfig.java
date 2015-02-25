@@ -2,6 +2,7 @@ package com.gop.society.utils;
 
 import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
 import com.mangofactory.swagger.paths.SwaggerPathProvider;
+import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,13 @@ import org.springframework.context.annotation.Configuration;
  */
 @Slf4j
 @Configuration
+@EnableSwagger
 public class SwaggerConfig {
-
-    private SpringSwaggerConfig springSwaggerConfig;
 
     @Value("${swagger.basepath}")
     private String swaggerBasepath;
+
+    private SpringSwaggerConfig springSwaggerConfig;
 
     @Autowired
     public void setSpringSwaggerConfig(SpringSwaggerConfig springSwaggerConfig) {

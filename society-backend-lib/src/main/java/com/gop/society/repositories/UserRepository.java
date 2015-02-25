@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
  * @author GhostOfPQ
  */
 @Component("userRepository")
-@Repository
 public interface UserRepository extends PagingAndSortingRepository<User, String> {
     public User findByLogin(final String login);
 }

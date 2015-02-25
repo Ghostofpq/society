@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
  * @author GhostOfPQ
  */
 @Component("organizationRepository")
-@Repository
 public interface OrganizationRepository extends PagingAndSortingRepository<Organization, String> {
     public Organization findByName(final String name);
 }

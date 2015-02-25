@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gop.society.controllers.UserController;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
+import com.gop.society.security.CustomAuthenticationManager;
 import com.gop.society.utils.UserCreationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -40,6 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserControllerTest {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CustomAuthenticationManager customAuthenticationManager;
 
     @Autowired
     private UserController userController;
@@ -82,7 +85,7 @@ public class UserControllerTest {
         mapper.writeValue(os, userCreationRequest);
         final String asJSON = os.toString();
         os.close();
-        mockMvc.perform(post("/users/").content(asJSON).contentType(APPLICATION_JSON_UTF8))
+        mockMvc.perform(post("/api/users/").content(asJSON).contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.login", is(testLogin)))
@@ -112,7 +115,7 @@ public class UserControllerTest {
         mapper.writeValue(os, userCreationRequest);
         final String asJSON = os.toString();
         os.close();
-        mockMvc.perform(post("/users/").content(asJSON).contentType(APPLICATION_JSON_UTF8))
+        mockMvc.perform(post("/api/users/").content(asJSON).contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().is(400));
     }
 
@@ -129,9 +132,9 @@ public class UserControllerTest {
         mockedUser.setLogin(testLogin);
         mockedUser.setPassword(testPwd);
 
-        when(userRepository.findOne("aze")).thenReturn(mockedUser);
-
-        mockMvc.perform(get("/users/aze"))
+        when(userRepository.findOne(testId)).thenReturn(mockedUser);
+        when(customAuthenticationManager.getAuthenticatedUserId()).thenReturn(testId);
+        mockMvc.perform(get("/api/users/{id}",testId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(testId)))
@@ -141,10 +144,31 @@ public class UserControllerTest {
 
     @Test
     public void findOneUserShouldReturn404WhenUserIsNotFound() throws Exception {
-        when(userRepository.findOne("aze")).thenReturn(null);
+        final String testId = "id";
+        when(userRepository.findOne(testId)).thenReturn(null);
+        when(customAuthenticationManager.getAuthenticatedUserId()).thenReturn(testId);
 
-        mockMvc.perform(get("/users/aze"))
+        mockMvc.perform(get("/api/users/{id}",testId))
                 .andExpect(status().is(404));
+    }
+    @Test
+    public void findOneUserShouldReturn403WhenUserIsNotAuthorized() throws Exception {
+        final String testId = "id";
+        final String testEmail = "em@ai.l";
+        final String testLogin = "login";
+        final String testPwd = "password";
+
+        final User mockedUser = new User();
+        mockedUser.setId(testId);
+        mockedUser.setEmail(testEmail);
+        mockedUser.setLogin(testLogin);
+        mockedUser.setPassword(testPwd);
+
+        when(userRepository.findOne(testId)).thenReturn(mockedUser);
+        when(customAuthenticationManager.getAuthenticatedUserId()).thenReturn("other");
+
+        mockMvc.perform(get("/api/users/{id}",testId))
+                .andExpect(status().is(403));
     }
 
 

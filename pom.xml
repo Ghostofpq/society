@@ -42,7 +42,8 @@
         <!-- spring -->
         <jetty.version>9.1.1.v20140108</jetty.version>
 
-        <spring.version>4.1.1.RELEASE</spring.version>
+        <spring.version>4.1.4.RELEASE</spring.version>
+        <spring.boot.version>1.2.1.RELEASE</spring.boot.version>
         <spring-security.version>3.2.5.RELEASE</spring-security.version>
         <spring.data.mongodb.version>1.6.0.RELEASE</spring.data.mongodb.version>
     </properties>
@@ -67,7 +68,21 @@
                 <artifactId>society-backend-war</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-mongodb</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-security</artifactId>
+                <version>${spring.boot.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>

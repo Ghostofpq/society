@@ -23,11 +23,12 @@
     <mockito:mock id="accountRepository" class="com.gop.society.repositories.AccountRepository"/>
     <mockito:mock id="currencyRepository" class="com.gop.society.repositories.CurrencyRepository"/>
     <mockito:mock id="organizationRepository" class="com.gop.society.repositories.OrganizationRepository"/>
-    <mockito:mock id="authenticationManager" class="com.gop.society.security.AuthenticationManager"/>
+    <mockito:mock id="customAuthenticationManager" class="com.gop.society.security.CustomAuthenticationManager"/>
     <mockito:mock id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate"/>
 
     <context:component-scan base-package="com.gop.society.services"/>
     <context:component-scan base-package="com.gop.society.exceptions"/>
     <context:component-scan base-package="com.gop.society.models"/>
     <context:component-scan base-package="com.gop.society.controllers"/>
+    <context:component-scan base-package="com.gop.society.security"/>
 </beans>

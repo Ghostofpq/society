@@ -4,7 +4,7 @@ import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
-import com.gop.society.security.AuthenticationManager;
+import com.gop.society.security.CustomAuthenticationManager;
 import com.gop.society.services.UserService;
 import com.gop.society.utils.Pageable;
 import com.gop.society.utils.UserCreationRequest;
@@ -27,13 +27,13 @@ import java.util.Map;
  */
 @Slf4j
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @Component("userController")
 public class UserController {
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private CustomAuthenticationManager customAuthenticationManager;
 
     @PostConstruct
     private void init() {
@@ -66,7 +66,8 @@ public class UserController {
     @ResponseBody
     public User get(
             @PathVariable("id") final String id)
-            throws CustomNotFoundException {
+            throws CustomNotFoundException,
+            CustomNotAuthorizedException {
         log.debug("get({})", id);
         return userService.get(id);
     }
@@ -125,7 +126,7 @@ public class UserController {
             throws CustomNotFoundException,
             CustomBadRequestException,
             CustomNotAuthorizedException {
-        if (authenticationManager.isAdmin()) {
+        if (customAuthenticationManager.isAdmin()) {
             final List<UserRole> userRoles = new ArrayList<>();
             for (String role : roles) {
                 if (UserRole.fromValue(role) != null) {
@@ -145,7 +146,7 @@ public class UserController {
             throws CustomNotFoundException,
             CustomBadRequestException,
             CustomNotAuthorizedException {
-        if (authenticationManager.isAdmin()) {
+        if (customAuthenticationManager.isAdmin()) {
             final UserRole userRole = UserRole.fromValue(role);
             if (UserRole.fromValue(role) != null) {
                 return userService.addRole(id, userRole);
@@ -163,7 +164,7 @@ public class UserController {
             throws CustomNotFoundException,
             CustomBadRequestException,
             CustomNotAuthorizedException {
-        if (authenticationManager.isAdmin()) {
+        if (customAuthenticationManager.isAdmin()) {
             final UserRole userRole = UserRole.fromValue(role);
             if (UserRole.fromValue(role) != null) {
                 return userService.removeRole(id, userRole);
@@ -179,7 +180,7 @@ public class UserController {
             @PathVariable("id") final String id)
             throws CustomNotFoundException,
             CustomNotAuthorizedException {
-        if (authenticationManager.isAdmin() || id.equals(authenticationManager.getAuthenticatedUser())) {
+        if (customAuthenticationManager.isAdmin() || id.equals(customAuthenticationManager.getAuthenticatedUser())) {
             userService.delete(id);
         }
         throw new CustomNotAuthorizedException();
@@ -191,7 +192,7 @@ public class UserController {
             @RequestParam(value = "page", required = false, defaultValue = "0") final Integer pageNumber,
             @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size)
             throws CustomNotAuthorizedException {
-        if (authenticationManager.isAdmin()) {
+        if (customAuthenticationManager.isAdmin()) {
             return userService.getAll(pageNumber, size);
         }
         throw new CustomNotAuthorizedException();

@@ -19,7 +19,7 @@ import javax.annotation.PostConstruct;
  */
 @Slf4j
 @Controller
-@RequestMapping("/accounts")
+@RequestMapping("/api/accounts")
 @Component("accountController")
 public class AccountController {
     @Autowired
