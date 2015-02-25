@@ -2,3 +2,4 @@
 *.iml
 society-backend-lib/target
 society-backend-war/target
+target
