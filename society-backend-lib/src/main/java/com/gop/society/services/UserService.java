@@ -2,7 +2,6 @@ package com.gop.society.services;
 
 import com.google.common.collect.Lists;
 import com.gop.society.exceptions.*;
-import com.gop.society.models.Organization;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.utils.EmailValidator;
@@ -31,14 +30,13 @@ import java.util.Random;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private OrganizationService organizationService;
 
     private ShaPasswordEncoder passwordEncoder;
     private EmailValidator emailValidator;
 
     @PostConstruct
     private void init() throws NoSuchAlgorithmException {
+        log.info("UserService started !");
         // Create MessageDigest instance for MD5
         passwordEncoder = new ShaPasswordEncoder(256);
         emailValidator = new EmailValidator();
@@ -159,10 +157,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
-    public Organization createOrganization(final Organization organization) throws CustomBadRequestException {
-        return organizationService.add(organization);
-    }
 
     public void delete(final String id) throws CustomNotFoundException {
         final User user = get(id);

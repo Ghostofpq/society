@@ -1,6 +1,7 @@
 package com.gop.society.config;
 
 import com.gop.society.security.CustomAuthenticationManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
@@ -12,9 +13,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import javax.annotation.PostConstruct;
+
 /**
  * Created by VMPX4526 on 25/02/2015.
  */
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
@@ -23,6 +27,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SecurityProperties security;
     @Autowired
     private CustomAuthenticationManager customAuthenticationManager;
+
+    @PostConstruct
+    private void init() {
+        log.debug("SecurityConfig Loaded");
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

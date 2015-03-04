@@ -13,6 +13,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @author GhostOfPQ
  */
@@ -22,6 +24,11 @@ public class QueryUserService {
     @Autowired
     @Qualifier("mongoTemplate")
     private MongoTemplate mongoTemplate;
+
+    @PostConstruct
+    private void init() {
+        log.info("QueryUserService started !");
+    }
 
     public Pageable<User> getByParameters(final String login,
                                           final int page,

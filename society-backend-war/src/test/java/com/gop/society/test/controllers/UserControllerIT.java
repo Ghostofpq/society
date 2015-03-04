@@ -1,6 +1,7 @@
 package com.gop.society.test.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gop.society.Application;
 import com.gop.society.controllers.UserController;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
@@ -14,6 +15,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,11 +42,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
-//@ContextConfiguration(classes = MockedRepositoriesConfig.class)
-@ContextConfiguration(locations = "classpath*:META-INF/spring/userTestContext.xml")
+@ContextConfiguration(classes = MockedRepositoriesConfig.class)
 @WebAppConfiguration
-@IntegrationTest
-public class UserControllerTest {
+//@ContextConfiguration(classes = MockedRepositoriesConfig.class)
+//@ContextConfiguration(locations = "classpath*:META-INF/spring/userTestContext.xml")
+public class UserControllerIT {
     @Autowired
     private UserRepository userRepository;
     @Autowired

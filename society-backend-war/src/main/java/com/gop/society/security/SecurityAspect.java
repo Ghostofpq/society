@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.Map;
 
 
@@ -16,9 +18,15 @@ import java.util.Map;
 @Slf4j
 @Aspect
 @Component("securityAspect")
+@EnableAspectJAutoProxy
 public class SecurityAspect {
     @Autowired
     private CustomAuthenticationManager customAuthenticationManager;
+
+    @PostConstruct
+    private void init() {
+        log.info("SecurityAspect Loaded !");
+    }
 
     @Before("execution(* com.gop.society.controllers.UserController.get(..)) && args(id)")
     public void beforeGetUser(final String id) throws CustomNotAuthorizedException {

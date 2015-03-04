@@ -20,9 +20,6 @@
     <context:annotation-config/>
 
     <mockito:mock id="userRepository" class="com.gop.society.repositories.UserRepository"/>
-    <mockito:mock id="accountRepository" class="com.gop.society.repositories.AccountRepository"/>
-    <mockito:mock id="currencyRepository" class="com.gop.society.repositories.CurrencyRepository"/>
-    <mockito:mock id="organizationRepository" class="com.gop.society.repositories.OrganizationRepository"/>
     <mockito:mock id="customAuthenticationManager" class="com.gop.society.security.CustomAuthenticationManager"/>
     <mockito:mock id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate"/>
 
