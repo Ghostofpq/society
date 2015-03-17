@@ -1,11 +1,10 @@
 package com.gop.society.test.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gop.society.Application;
 import com.gop.society.controllers.UserController;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
-import com.gop.society.security.CustomAuthenticationManager;
+import com.gop.society.security.CustomAuthenticationProvider;
 import com.gop.society.test.config.MockedRepositoriesConfig;
 import com.gop.society.utils.UserCreationRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -14,10 +13,6 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.IntegrationTest;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -50,7 +45,7 @@ public class UserControllerIT {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private CustomAuthenticationManager customAuthenticationManager;
+    private CustomAuthenticationProvider customAuthenticationProvider;
 
     @Autowired
     private UserController userController;
@@ -141,8 +136,8 @@ public class UserControllerIT {
         mockedUser.setPassword(testPwd);
 
         when(userRepository.findOne(testId)).thenReturn(mockedUser);
-        when(customAuthenticationManager.getAuthenticatedUserId()).thenReturn(testId);
-        mockMvc.perform(get("/api/users/{id}",testId))
+        when(customAuthenticationProvider.getAuthenticatedUserId()).thenReturn(testId);
+        mockMvc.perform(get("/api/users/{id}", testId))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$.id", is(testId)))
@@ -154,11 +149,12 @@ public class UserControllerIT {
     public void findOneUserShouldReturn404WhenUserIsNotFound() throws Exception {
         final String testId = "id";
         when(userRepository.findOne(testId)).thenReturn(null);
-        when(customAuthenticationManager.getAuthenticatedUserId()).thenReturn(testId);
+        when(customAuthenticationProvider.getAuthenticatedUserId()).thenReturn(testId);
 
-        mockMvc.perform(get("/api/users/{id}",testId))
+        mockMvc.perform(get("/api/users/{id}", testId))
                 .andExpect(status().is(404));
     }
+
     @Test
     public void findOneUserShouldReturn403WhenUserIsNotAuthorized() throws Exception {
         final String testId = "id";
@@ -173,9 +169,9 @@ public class UserControllerIT {
         mockedUser.setPassword(testPwd);
 
         when(userRepository.findOne(testId)).thenReturn(mockedUser);
-        when(customAuthenticationManager.getAuthenticatedUserId()).thenReturn("other");
+        when(customAuthenticationProvider.getAuthenticatedUserId()).thenReturn("other");
 
-        mockMvc.perform(get("/api/users/{id}",testId))
+        mockMvc.perform(get("/api/users/{id}", testId))
                 .andExpect(status().is(403));
     }
 

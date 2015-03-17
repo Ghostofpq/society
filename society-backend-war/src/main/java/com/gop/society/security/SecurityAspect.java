@@ -21,7 +21,7 @@ import java.util.Map;
 @EnableAspectJAutoProxy
 public class SecurityAspect {
     @Autowired
-    private CustomAuthenticationManager customAuthenticationManager;
+    private CustomAuthenticationProvider customAuthenticationProvider;
 
     @PostConstruct
     private void init() {
@@ -31,10 +31,10 @@ public class SecurityAspect {
     @Before("execution(* com.gop.society.controllers.UserController.get(..)) && args(id)")
     public void beforeGetUser(final String id) throws CustomNotAuthorizedException {
         log.debug("SecurityCheck : beforeGetUser");
-        final String currentUserId = customAuthenticationManager.getAuthenticatedUserId();
-        if (!customAuthenticationManager.isAdmin() && !id.equals(currentUserId)) {
+        final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
+        if (!customAuthenticationProvider.isAdmin() && !id.equals(currentUserId)) {
             log.error("expected ID {}", id);
-            log.error("current ID {}", customAuthenticationManager.getAuthenticatedUserId());
+            log.error("current ID {}", customAuthenticationProvider.getAuthenticatedUserId());
             throw new CustomNotAuthorizedException();
         }
     }
@@ -42,10 +42,10 @@ public class SecurityAspect {
     @Before("execution(* com.gop.society.controllers.UserController.updateField(..)) && args(id,field,value)")
     public void beforeUpdateUser(final String id, final String field, final Object value) throws CustomNotAuthorizedException {
         log.debug("SecurityCheck : beforeUpdateUser");
-        final String currentUserId = customAuthenticationManager.getAuthenticatedUserId();
-        if (!customAuthenticationManager.isAdmin() && !id.equals(currentUserId)) {
+        final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
+        if (!customAuthenticationProvider.isAdmin() && !id.equals(currentUserId)) {
             log.error("expected ID {}", id);
-            log.error("current ID {}", customAuthenticationManager.getAuthenticatedUserId());
+            log.error("current ID {}", customAuthenticationProvider.getAuthenticatedUserId());
             throw new CustomNotAuthorizedException();
         }
     }
@@ -53,10 +53,10 @@ public class SecurityAspect {
     @Before("execution(* com.gop.society.controllers.UserController.updateField(..)) && args(id,fields)")
     public void beforeUpdateUser(final String id, final Map<String, Object> fields) throws CustomNotAuthorizedException {
         log.debug("SecurityCheck : beforeUpdateUser");
-        final String currentUserId = customAuthenticationManager.getAuthenticatedUserId();
-        if (!customAuthenticationManager.isAdmin() && !id.equals(currentUserId)) {
+        final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
+        if (!customAuthenticationProvider.isAdmin() && !id.equals(currentUserId)) {
             log.error("expected ID {}", id);
-            log.error("current ID {}", customAuthenticationManager.getAuthenticatedUserId());
+            log.error("current ID {}", customAuthenticationProvider.getAuthenticatedUserId());
             throw new CustomNotAuthorizedException();
         }
     }

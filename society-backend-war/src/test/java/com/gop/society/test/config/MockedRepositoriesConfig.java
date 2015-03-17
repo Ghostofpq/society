@@ -1,7 +1,7 @@
 package com.gop.society.test.config;
 
 import com.gop.society.repositories.UserRepository;
-import com.gop.society.security.CustomAuthenticationManager;
+import com.gop.society.security.CustomAuthenticationProvider;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -25,8 +25,8 @@ public class MockedRepositoriesConfig {
 
     @Bean
     @Primary
-    public CustomAuthenticationManager customAuthenticationManager() {
-        return Mockito.mock(CustomAuthenticationManager.class);
+    public CustomAuthenticationProvider customAuthenticationManager() {
+        return Mockito.mock(CustomAuthenticationProvider.class);
     }
 
     @Bean

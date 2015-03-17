@@ -25,8 +25,8 @@ import java.util.List;
  * @author GhostOfPQ
  */
 @Slf4j
-@Component("authenticationManager")
-public class CustomAuthenticationManager implements AuthenticationProvider {
+@Component("authenticationProvider")
+public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private UserService userService;
 
@@ -34,7 +34,7 @@ public class CustomAuthenticationManager implements AuthenticationProvider {
 
     @PostConstruct
     private void init() {
-        log.info("AuthenticationManager started !");
+        log.info("authenticationProvider started !");
         passwordEncoder = new ShaPasswordEncoder(256);
     }
 
@@ -75,7 +75,7 @@ public class CustomAuthenticationManager implements AuthenticationProvider {
         } else {
             if (authentication instanceof UsernamePasswordAuthenticationToken) {
                 final UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = (UsernamePasswordAuthenticationToken) authentication;
-                log.debug("current user id : {}", (String) usernamePasswordAuthenticationToken.getPrincipal());
+                log.debug("current user id : {}", usernamePasswordAuthenticationToken.getPrincipal());
                 return (String) usernamePasswordAuthenticationToken.getPrincipal();
             } else {
                 return null;

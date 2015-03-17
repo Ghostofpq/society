@@ -1,6 +1,7 @@
-package com.gop.society.utils;
+package com.gop.society.config;
 
 import com.mangofactory.swagger.configuration.SpringSwaggerConfig;
+import com.mangofactory.swagger.models.dto.ApiInfo;
 import com.mangofactory.swagger.paths.SwaggerPathProvider;
 import com.mangofactory.swagger.plugin.EnableSwagger;
 import com.mangofactory.swagger.plugin.SwaggerSpringMvcPlugin;
@@ -41,5 +42,17 @@ public class SwaggerConfig {
                 return swaggerBasepath + "/api-docs";
             }
         });
+    }
+
+    private ApiInfo apiInfo() {
+        ApiInfo apiInfo = new ApiInfo(
+                "Society REST API",
+                "This is a description of your API.",
+                "API TOS",
+                "ghostofpq@gmail.com",
+                "API License",
+                "API License URL"
+        );
+        return apiInfo;
     }
 }

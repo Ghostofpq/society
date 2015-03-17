@@ -1,6 +1,8 @@
 package com.gop.society.config;
 
-import com.gop.society.security.CustomAuthenticationManager;
+import com.gop.society.security.CustomAuthenticationFailureHandler;
+import com.gop.society.security.CustomAuthenticationProvider;
+import com.gop.society.security.CustomAuthenticationSuccessHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
@@ -8,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -21,12 +22,11 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SecurityProperties security;
     @Autowired
-    private CustomAuthenticationManager customAuthenticationManager;
+    private CustomAuthenticationProvider customAuthenticationProvider;
 
     @PostConstruct
     private void init() {
@@ -37,20 +37,23 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
+        //URL white list
         http.authorizeRequests().antMatchers("/api/users", "/api-docs/**", "/index.html", "/swagger/**").permitAll();
 
+        //URL intercepted
         http.authorizeRequests().antMatchers("/api/*").permitAll().anyRequest().authenticated();
 
-        http.formLogin().loginProcessingUrl("/login").permitAll();
+        //Session
+        http.formLogin().loginProcessingUrl("/session/login").passwordParameter("password").usernameParameter("username")
+                .failureHandler(new CustomAuthenticationFailureHandler())
+                .successHandler(new CustomAuthenticationSuccessHandler()).permitAll();
 
         http.logout().logoutUrl("/logout").permitAll();
-
-        http.httpBasic();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(customAuthenticationManager);
+        auth.authenticationProvider(customAuthenticationProvider);
     }
 
     @Bean
