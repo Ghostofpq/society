@@ -4,7 +4,6 @@ import com.gop.society.exceptions.CustomInvalidLoginOrPasswordException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
 import com.gop.society.services.UserService;
-import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -12,14 +11,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author GhostOfPQ
@@ -51,11 +46,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
         final String encodedPassword = passwordEncoder.encodePassword(authentication.getCredentials().toString(), user.getSalt());
         if (user.getEncodedPassword().equals(encodedPassword)) {
-            List<GrantedAuthority> grantedAuths = new ArrayList<>();
-            for (final UserRole role : user.getUserRoles()) {
-                grantedAuths.add(new SimpleGrantedAuthority(role.toString()));
-            }
-            return new UsernamePasswordAuthenticationToken(user.getId(), authentication.getCredentials(), grantedAuths);
+            return new UsernamePasswordAuthenticationToken(user.getId(), authentication.getCredentials());
         } else {
             log.error("2-Invalid Password");
             throw new CustomInvalidLoginOrPasswordException("Invalid login or Password");
@@ -97,10 +88,5 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
                 throw new CustomNotFoundException("null");
             }
         }
-    }
-
-    public boolean isAdmin() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated() && authentication.getAuthorities().contains(new SimpleGrantedAuthority(UserRole.ADMIN.toString()));
     }
 }

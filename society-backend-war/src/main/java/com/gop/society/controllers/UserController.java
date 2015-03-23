@@ -4,11 +4,9 @@ import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.User;
-import com.gop.society.security.CustomAuthenticationProvider;
 import com.gop.society.services.UserService;
 import com.gop.society.utils.Pageable;
 import com.gop.society.utils.UserCreationRequest;
-import com.gop.society.utils.UserRole;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 
@@ -32,8 +28,6 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private CustomAuthenticationProvider customAuthenticationProvider;
 
     @PostConstruct
     private void init() {
@@ -44,20 +38,13 @@ public class UserController {
     @ResponseBody
     public User create(@RequestBody final UserCreationRequest userToCreate) throws CustomBadRequestException {
         log.debug("In create with {}", userToCreate.toString());
-
         final User user = new User();
-
         // Set Login
         user.setLogin(userToCreate.getLogin());
         // Set Email
         user.setEmail(userToCreate.getEmail());
         // Set Password
         user.setPassword(userToCreate.getPassword());
-        // Set basic Role
-        final List<UserRole> roles = new ArrayList<>();
-        roles.add(UserRole.USER);
-        user.setUserRoles(roles);
-
         // Save
         return userService.add(user);
     }
@@ -118,72 +105,13 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/{id}/roles", method = RequestMethod.PUT)
-    @ResponseBody
-    public User updateRoles(
-            @PathVariable("id") final String id,
-            @RequestBody final List<String> roles)
-            throws CustomNotFoundException,
-            CustomBadRequestException,
-            CustomNotAuthorizedException {
-        if (customAuthenticationProvider.isAdmin()) {
-            final List<UserRole> userRoles = new ArrayList<>();
-            for (String role : roles) {
-                if (UserRole.fromValue(role) != null) {
-                    userRoles.add(UserRole.fromValue(role));
-                }
-            }
-            return userService.updateRoles(id, userRoles);
-        }
-        throw new CustomNotAuthorizedException();
-    }
-
-    @RequestMapping(value = "/{id}/roles/add", method = RequestMethod.PUT)
-    @ResponseBody
-    public User addRole(
-            @PathVariable("id") final String id,
-            @RequestBody final String role)
-            throws CustomNotFoundException,
-            CustomBadRequestException,
-            CustomNotAuthorizedException {
-        if (customAuthenticationProvider.isAdmin()) {
-            final UserRole userRole = UserRole.fromValue(role);
-            if (UserRole.fromValue(role) != null) {
-                return userService.addRole(id, userRole);
-            }
-            throw new CustomBadRequestException("role");
-        }
-        throw new CustomNotAuthorizedException();
-    }
-
-    @RequestMapping(value = "/{id}/roles/remove", method = RequestMethod.PUT)
-    @ResponseBody
-    public User removeRole(
-            @PathVariable("id") final String id,
-            @RequestBody final String role)
-            throws CustomNotFoundException,
-            CustomBadRequestException,
-            CustomNotAuthorizedException {
-        if (customAuthenticationProvider.isAdmin()) {
-            final UserRole userRole = UserRole.fromValue(role);
-            if (UserRole.fromValue(role) != null) {
-                return userService.removeRole(id, userRole);
-            }
-            throw new CustomBadRequestException("role");
-        }
-        throw new CustomNotAuthorizedException();
-    }
-
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseBody
     public void delete(
             @PathVariable("id") final String id)
             throws CustomNotFoundException,
             CustomNotAuthorizedException {
-        if (customAuthenticationProvider.isAdmin() || id.equals(customAuthenticationProvider.getAuthenticatedUser())) {
-            userService.delete(id);
-        }
-        throw new CustomNotAuthorizedException();
+        userService.delete(id);
     }
 
     @RequestMapping(value = "/all", method = RequestMethod.GET)
@@ -192,10 +120,7 @@ public class UserController {
             @RequestParam(value = "page", required = false, defaultValue = "0") final Integer pageNumber,
             @RequestParam(value = "size", required = false, defaultValue = "10") final Integer size)
             throws CustomNotAuthorizedException {
-        if (customAuthenticationProvider.isAdmin()) {
-            return userService.getAll(pageNumber, size);
-        }
-        throw new CustomNotAuthorizedException();
+        return userService.getAll(pageNumber, size);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

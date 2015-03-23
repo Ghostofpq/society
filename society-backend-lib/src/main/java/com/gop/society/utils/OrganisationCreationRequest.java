@@ -6,7 +6,7 @@ import lombok.Data;
  * @author GhostOfPQ
  */
 @Data
-public class OrganizationCreationRequest {
+public class OrganisationCreationRequest {
     private String creator;
     private String name;
     private String description;

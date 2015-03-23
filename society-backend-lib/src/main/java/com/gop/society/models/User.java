@@ -1,6 +1,5 @@
 package com.gop.society.models;
 
-import com.gop.society.utils.UserRole;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -8,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
 import java.security.SecureRandom;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -34,7 +32,6 @@ public class User {
     private String encodedPassword;
     private String salt;
 
-    private List<UserRole> userRoles;
     private Set<String> accounts;
 
     private long creationTs;

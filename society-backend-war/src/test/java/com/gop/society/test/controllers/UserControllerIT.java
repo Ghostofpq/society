@@ -39,8 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = MockedRepositoriesConfig.class)
 @WebAppConfiguration
-//@ContextConfiguration(classes = MockedRepositoriesConfig.class)
-//@ContextConfiguration(locations = "classpath*:META-INF/spring/userTestContext.xml")
 public class UserControllerIT {
     @Autowired
     private UserRepository userRepository;

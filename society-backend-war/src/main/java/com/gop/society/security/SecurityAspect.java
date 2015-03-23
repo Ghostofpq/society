@@ -32,7 +32,7 @@ public class SecurityAspect {
     public void beforeGetUser(final String id) throws CustomNotAuthorizedException {
         log.debug("SecurityCheck : beforeGetUser");
         final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
-        if (!customAuthenticationProvider.isAdmin() && !id.equals(currentUserId)) {
+        if (!id.equals(currentUserId)) {
             log.error("expected ID {}", id);
             log.error("current ID {}", customAuthenticationProvider.getAuthenticatedUserId());
             throw new CustomNotAuthorizedException();
@@ -40,23 +40,32 @@ public class SecurityAspect {
     }
 
     @Before("execution(* com.gop.society.controllers.UserController.updateField(..)) && args(id,field,value)")
-    public void beforeUpdateUser(final String id, final String field, final Object value) throws CustomNotAuthorizedException {
-        log.debug("SecurityCheck : beforeUpdateUser");
+    public void beforeUpdateFieldUser(final String id, final String field, final Object value) throws CustomNotAuthorizedException {
+        log.debug("SecurityCheck : beforeUpdateFieldUser");
         final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
-        if (!customAuthenticationProvider.isAdmin() && !id.equals(currentUserId)) {
+        if (!id.equals(currentUserId)) {
             log.error("expected ID {}", id);
             log.error("current ID {}", customAuthenticationProvider.getAuthenticatedUserId());
             throw new CustomNotAuthorizedException();
         }
     }
 
-    @Before("execution(* com.gop.society.controllers.UserController.updateField(..)) && args(id,fields)")
+    @Before("execution(* com.gop.society.controllers.UserController.update(..)) && args(id,fields)")
     public void beforeUpdateUser(final String id, final Map<String, Object> fields) throws CustomNotAuthorizedException {
         log.debug("SecurityCheck : beforeUpdateUser");
         final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
-        if (!customAuthenticationProvider.isAdmin() && !id.equals(currentUserId)) {
+        if (!id.equals(currentUserId)) {
             log.error("expected ID {}", id);
             log.error("current ID {}", customAuthenticationProvider.getAuthenticatedUserId());
+            throw new CustomNotAuthorizedException();
+        }
+    }
+
+    @Before("execution(* com.gop.society.controllers.UserController.delete(..)) && args(id)")
+    public void beforeDelete(final String id) throws CustomNotAuthorizedException {
+        log.debug("SecurityCheck : beforeUpdateUser");
+        final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
+        if (!id.equals(currentUserId)) {
             throw new CustomNotAuthorizedException();
         }
     }
