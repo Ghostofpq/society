@@ -106,8 +106,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    @ResponseBody
-    public void delete(
+      @ResponseBody
+      public void delete(
             @PathVariable("id") final String id)
             throws CustomNotFoundException,
             CustomNotAuthorizedException {

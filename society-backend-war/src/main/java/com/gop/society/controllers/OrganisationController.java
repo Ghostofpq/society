@@ -3,10 +3,15 @@ package com.gop.society.controllers;
 import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
+import com.gop.society.models.Account;
+import com.gop.society.models.Currency;
 import com.gop.society.models.Organisation;
 import com.gop.society.security.CustomAuthenticationProvider;
+import com.gop.society.services.AccountService;
+import com.gop.society.services.CurrencyService;
 import com.gop.society.services.OrganisationService;
 import com.gop.society.services.UserService;
+import com.gop.society.utils.CurrencyCreationRequest;
 import com.gop.society.utils.OrganisationCreationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +34,10 @@ public class OrganisationController {
     @Autowired
     private OrganisationService organisationService;
     @Autowired
+    private CurrencyService currencyService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
 
     @PostConstruct
@@ -38,7 +47,9 @@ public class OrganisationController {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ResponseBody
-    public Organisation create(@RequestBody final OrganisationCreationRequest organisationCreationRequest) throws CustomBadRequestException {
+    public Organisation create(
+            @RequestBody final OrganisationCreationRequest organisationCreationRequest)
+            throws CustomBadRequestException {
         log.debug("create({})", organisationCreationRequest.toString());
         final Organisation organisation = new Organisation();
         organisation.setName(organisationCreationRequest.getName());
@@ -65,8 +76,38 @@ public class OrganisationController {
             throws CustomNotFoundException,
             CustomBadRequestException,
             CustomNotAuthorizedException {
+        log.debug("join({})", id);
         Organisation organisation = organisationService.get(id);
         organisation.addMember(customAuthenticationProvider.getAuthenticatedUserId());
+        return organisationService.update(organisation);
+    }
+
+    @RequestMapping(value = "/{id}/currency", method = RequestMethod.POST)
+    @ResponseBody
+    public Organisation createCurrency(
+            @PathVariable("id") final String id,
+            @RequestBody final CurrencyCreationRequest currencyCreationRequest)
+            throws CustomNotFoundException,
+            CustomBadRequestException,
+            CustomNotAuthorizedException {
+        log.debug("createCurrency({},{})", id, currencyCreationRequest);
+
+        //Create currency
+        Currency currency = new Currency();
+        currency.setName(currencyCreationRequest.getName());
+        currency.setOwnerId(id);
+        currency.setTotal(currencyCreationRequest.getInitialAmount());
+        currency = currencyService.add(currency);
+
+        //Create organisation account
+        Account account = new Account();
+        account.setBalance(currencyCreationRequest.getInitialAmount());
+        account.setCurrencyId(currency.getId());
+        account = accountService.add(account);
+
+        //Add account to organisation
+        Organisation organisation = organisationService.get(id);
+        organisation.getAccounts().add(account.getId());
         return organisationService.update(organisation);
     }
 }

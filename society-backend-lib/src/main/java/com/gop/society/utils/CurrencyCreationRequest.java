@@ -8,5 +8,5 @@ import lombok.Data;
 @Data
 public class CurrencyCreationRequest {
     private String name;
-    private String organizationInCharge;
+    private long initialAmount;
 }

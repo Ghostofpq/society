@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
 import java.security.SecureRandom;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -36,6 +37,10 @@ public class User {
 
     private long creationTs;
     private long updateTs;
+
+    public User() {
+        accounts = new HashSet<>();
+    }
 
     public void setPassword(String password) {
         final Random r = new SecureRandom();

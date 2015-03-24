@@ -1,6 +1,9 @@
 package com.gop.society.security;
 
 import com.gop.society.exceptions.CustomNotAuthorizedException;
+import com.gop.society.exceptions.CustomNotFoundException;
+import com.gop.society.models.Organisation;
+import com.gop.society.services.OrganisationService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -22,6 +25,9 @@ import java.util.Map;
 public class SecurityAspect {
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
+
+    @Autowired
+    private OrganisationService organisationService;
 
     @PostConstruct
     private void init() {
@@ -66,6 +72,16 @@ public class SecurityAspect {
         log.debug("SecurityCheck : beforeUpdateUser");
         final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
         if (!id.equals(currentUserId)) {
+            throw new CustomNotAuthorizedException();
+        }
+    }
+
+    @Before("execution(* com.gop.society.controllers.OrganisationController.createCurrency(..)) && args(id,currencyCreationRequest)")
+    public void beforeCreateCurrency(final String id) throws CustomNotAuthorizedException, CustomNotFoundException {
+        log.debug("SecurityCheck : beforeCreateCurrency");
+        final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
+        final Organisation organisation = organisationService.get(id);
+        if (!organisation.getManagers().contains(currentUserId)) {
             throw new CustomNotAuthorizedException();
         }
     }

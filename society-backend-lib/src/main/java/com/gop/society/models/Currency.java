@@ -22,4 +22,9 @@ public class Currency {
 
     private long creationTs;
     private long updateTs;
+
+    public Currency() {
+        total = 0;
+        numberOfUser = 0;
+    }
 }
