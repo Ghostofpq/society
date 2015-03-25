@@ -9,5 +9,4 @@ import org.springframework.stereotype.Component;
  */
 @Component("accountRepository")
 public interface AccountRepository extends PagingAndSortingRepository<Account, String> {
-    public Account findByOwnerIdAndCurrencyId(final String ownerId, final String currencyId);
 }

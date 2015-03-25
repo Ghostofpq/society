@@ -4,6 +4,7 @@ import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.models.Organisation;
 import com.gop.society.services.OrganisationService;
+import com.gop.society.utils.CurrencyCreationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -77,7 +78,7 @@ public class SecurityAspect {
     }
 
     @Before("execution(* com.gop.society.controllers.OrganisationController.createCurrency(..)) && args(id,currencyCreationRequest)")
-    public void beforeCreateCurrency(final String id) throws CustomNotAuthorizedException, CustomNotFoundException {
+    public void beforeCreateCurrency(final String id, final CurrencyCreationRequest currencyCreationRequest) throws CustomNotAuthorizedException, CustomNotFoundException {
         log.debug("SecurityCheck : beforeCreateCurrency");
         final String currentUserId = customAuthenticationProvider.getAuthenticatedUserId();
         final Organisation organisation = organisationService.get(id);
