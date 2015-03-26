@@ -30,7 +30,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @PostConstruct
     private void init() {
-        log.debug("SecurityConfig Loaded");
+        log.info("SecurityConfig Loaded");
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.gop.society.controllers;
 import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
+import com.gop.society.exceptions.ErrorMessage;
 import com.gop.society.models.User;
 import com.gop.society.services.UserService;
 import com.gop.society.utils.Pageable;
@@ -106,8 +107,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-      @ResponseBody
-      public void delete(
+    @ResponseBody
+    public void delete(
             @PathVariable("id") final String id)
             throws CustomNotFoundException,
             CustomNotAuthorizedException {
@@ -126,24 +127,24 @@ public class UserController {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CustomNotFoundException.class)
     @ResponseBody
-    private String handleNotFoundException(CustomNotFoundException e) {
+    private ErrorMessage handleNotFoundException(CustomNotFoundException e) {
         log.error(HttpStatus.NOT_FOUND + ":" + e.getMessage());
-        return e.getMessage();
+        return new ErrorMessage(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler(CustomNotAuthorizedException.class)
     @ResponseBody
-    private String handleNotAuthorizedException(CustomNotAuthorizedException e) {
+    private ErrorMessage handleNotAuthorizedException(CustomNotAuthorizedException e) {
         log.error(HttpStatus.FORBIDDEN + ":" + e.getMessage());
-        return e.getMessage();
+        return new ErrorMessage(e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CustomBadRequestException.class)
     @ResponseBody
-    private String handleBadRequestException(CustomBadRequestException e) {
+    private ErrorMessage handleBadRequestException(CustomBadRequestException e) {
         log.error(HttpStatus.BAD_REQUEST + ":" + e.getMessage());
-        return e.getMessage();
+        return new ErrorMessage(e.getMessage());
     }
 }
