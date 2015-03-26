@@ -9,4 +9,5 @@ import org.springframework.stereotype.Component;
  */
 @Component("currencyRepository")
 public interface CurrencyRepository extends PagingAndSortingRepository<Currency, String> {
+    public Currency findByName(final String login);
 }

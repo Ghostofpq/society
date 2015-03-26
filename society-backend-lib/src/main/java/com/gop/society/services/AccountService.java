@@ -3,9 +3,9 @@ package com.gop.society.services;
 import com.google.common.collect.Lists;
 import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotFoundException;
-import com.gop.society.exceptions.CustomOrganizationNotFoundForIdException;
 import com.gop.society.models.Account;
 import com.gop.society.repositories.AccountRepository;
+import com.gop.society.utils.AccountType;
 import com.gop.society.utils.Pageable;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
@@ -38,7 +38,15 @@ public class AccountService {
         if (account != null) {
             return account;
         }
-        throw new CustomOrganizationNotFoundForIdException(id);
+        throw new CustomNotFoundException("Account not found");
+    }
+
+    public Account find(final String ownerId, final String currencyId, final AccountType accountType) throws CustomNotFoundException {
+        final Account account = accountRepository.findByOwnerIdAndCurrencyIdAndAccountType(ownerId, currencyId, accountType);
+        if (account != null) {
+            return account;
+        }
+        throw new CustomNotFoundException("Account not found");
     }
 
     public Account update(Account account) throws CustomBadRequestException {

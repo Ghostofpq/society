@@ -28,7 +28,6 @@ public class Organisation {
     private Set<String> members;
 
     private Set<String> accounts;
-
     private long creationTs;
     private long updateTs;
 

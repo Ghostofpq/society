@@ -9,4 +9,5 @@ import org.springframework.stereotype.Component;
  */
 @Component("organisationRepository")
 public interface OrganisationRepository extends PagingAndSortingRepository<Organisation, String> {
+    public Organisation findByName(final String login);
 }

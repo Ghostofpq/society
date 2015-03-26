@@ -5,7 +5,7 @@ package com.gop.society.utils;
  */
 public enum AccountType {
     USER("User Account"),
-    ORGANIZATION("Organization Account");
+    ORGANISATION("Organisation Account");
 
     private final String text;
 

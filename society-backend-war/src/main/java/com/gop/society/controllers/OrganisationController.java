@@ -11,6 +11,7 @@ import com.gop.society.services.AccountService;
 import com.gop.society.services.CurrencyService;
 import com.gop.society.services.OrganisationService;
 import com.gop.society.services.UserService;
+import com.gop.society.utils.AccountType;
 import com.gop.society.utils.CurrencyCreationRequest;
 import com.gop.society.utils.OrganisationCreationRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +55,7 @@ public class OrganisationController {
         final Organisation organisation = new Organisation();
         organisation.setName(organisationCreationRequest.getName());
         organisation.setDescription(organisationCreationRequest.getDescription());
-        organisation.addManager(organisationCreationRequest.getCreator());
+        organisation.addManager(customAuthenticationProvider.getAuthenticatedUserId());
         // Save
         return organisationService.add(organisation);
     }
@@ -91,22 +92,23 @@ public class OrganisationController {
             CustomBadRequestException,
             CustomNotAuthorizedException {
         log.debug("createCurrency({},{})", id, currencyCreationRequest);
+        Organisation organisation = organisationService.get(id);
 
         //Create currency
         Currency currency = new Currency();
         currency.setName(currencyCreationRequest.getName());
         currency.setOwnerId(id);
-        currency.setTotal(currencyCreationRequest.getInitialAmount());
         currency = currencyService.add(currency);
 
         //Create organisation account
         Account account = new Account();
+        account.setAccountType(AccountType.ORGANISATION);
+        account.setOwnerId(organisation.getId());
         account.setBalance(currencyCreationRequest.getInitialAmount());
         account.setCurrencyId(currency.getId());
         account = accountService.add(account);
 
         //Add account to organisation
-        Organisation organisation = organisationService.get(id);
         organisation.getAccounts().add(account.getId());
         return organisationService.update(organisation);
     }

@@ -17,14 +17,7 @@ public class Currency {
 
     @Indexed(unique = true)
     private String name;
-    private long total;
-    private long numberOfUser;
 
     private long creationTs;
     private long updateTs;
-
-    public Currency() {
-        total = 0;
-        numberOfUser = 0;
-    }
 }
