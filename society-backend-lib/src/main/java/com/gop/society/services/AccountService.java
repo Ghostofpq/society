@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * @author GhostOfPQ
  */
@@ -47,6 +49,14 @@ public class AccountService {
             return account;
         }
         throw new CustomNotFoundException("Account not found");
+    }
+
+    public List<Account> findAllForCurrency(final String currencyId) throws CustomNotFoundException {
+        return accountRepository.findByCurrencyId(currencyId);
+    }
+
+    public List<Account> findAllForOwner(final String ownerId, final AccountType accountType) throws CustomNotFoundException {
+        return accountRepository.findByOwnerIdAndAccountType(ownerId, accountType);
     }
 
     public Account update(Account account) throws CustomBadRequestException {

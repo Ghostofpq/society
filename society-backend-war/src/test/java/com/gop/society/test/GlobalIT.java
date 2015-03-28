@@ -11,6 +11,7 @@ import com.gop.society.repositories.OrganisationRepository;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.security.CustomAuthenticationProvider;
 import com.gop.society.test.config.MockedSecurityConfig;
+import com.gop.society.utils.AccountType;
 import com.gop.society.utils.CurrencyCreationRequest;
 import com.gop.society.utils.OrganisationCreationRequest;
 import com.gop.society.utils.UserCreationRequest;
@@ -49,6 +50,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = MockedSecurityConfig.class)
 @WebAppConfiguration
 public class GlobalIT {
+    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+            MediaType.APPLICATION_JSON.getSubtype(),
+            Charset.forName("utf8")
+    );
+    private final String login1 = "login1";
+    private final String pwd1 = "pwd1";
+    private final String email1 = "email1";
+    private final UserCreationRequest userCreationRequest1 = new UserCreationRequest(login1, pwd1, email1);
+    private final String login2 = "login2";
+    private final String pwd2 = "pwd2";
+    private final String email2 = "email2";
+    private final UserCreationRequest userCreationRequest2 = new UserCreationRequest(login2, pwd2, email2);
+    private final String organisationName = "organisationName";
+    private final String organisationDesc = "organisationDesc";
+    private final String currencyName = "currencyName";
+    private final long currencyInitialAmount = 123l;
     @Autowired
     private CustomAuthenticationProvider customAuthenticationProvider;
     @Autowired
@@ -61,21 +78,14 @@ public class GlobalIT {
     private CurrencyRepository currencyRepository;
     @Autowired
     private AccountRepository accountRepository;
-
     @Autowired
     private CharacterEncodingFilter characterEncodingFilter;
-
     private MockMvc mockMvc;
 
     @PostConstruct
     private void init() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).addFilter(this.characterEncodingFilter).build();
     }
-
-    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8")
-    );
 
     @Before
     public void cleanDataBase() {
@@ -106,24 +116,6 @@ public class GlobalIT {
             log.debug(a.toString());
         }
     }
-
-    private final String login1 = "login1";
-    private final String pwd1 = "pwd1";
-    private final String email1 = "email1";
-
-    private final UserCreationRequest userCreationRequest1 = new UserCreationRequest(login1, pwd1, email1);
-
-    private final String login2 = "login2";
-    private final String pwd2 = "pwd2";
-    private final String email2 = "email2";
-
-    private final UserCreationRequest userCreationRequest2 = new UserCreationRequest(login2, pwd2, email2);
-
-    private final String organisationName = "organisationName";
-    private final String organisationDesc = "organisationDesc";
-
-    private final String currencyName = "currencyName";
-    private final long currencyInitialAmount = 123l;
 
     @Test
     public void createUserShouldGoFine() throws Exception {
@@ -189,6 +181,9 @@ public class GlobalIT {
 
         final Currency currency = currencyRepository.findByName(currencyName);
         assertTrue(currency != null);
+
+        final Account account = accountRepository.findByOwnerIdAndCurrencyIdAndAccountType(organisation.getId(), currency.getId(), AccountType.ORGANISATION);
+        assertTrue(account != null);
     }
 
 

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * @author GhostOfPQ
@@ -68,6 +69,16 @@ public class OrganisationController {
             CustomNotAuthorizedException {
         log.debug("get({})", id);
         return organisationService.get(id);
+    }
+
+    @RequestMapping(value = "/{id}/accounts", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Account> getAccounts(
+            @PathVariable("id") final String id)
+            throws CustomNotFoundException,
+            CustomNotAuthorizedException {
+        log.debug("getAccounts({})", id);
+        return accountService.findAllForOwner(id, AccountType.ORGANISATION);
     }
 
     @RequestMapping(value = "/{id}/join", method = RequestMethod.GET)

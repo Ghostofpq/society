@@ -4,8 +4,11 @@ import com.gop.society.exceptions.CustomBadRequestException;
 import com.gop.society.exceptions.CustomNotAuthorizedException;
 import com.gop.society.exceptions.CustomNotFoundException;
 import com.gop.society.exceptions.ErrorMessage;
+import com.gop.society.models.Account;
 import com.gop.society.models.User;
+import com.gop.society.services.AccountService;
 import com.gop.society.services.UserService;
+import com.gop.society.utils.AccountType;
 import com.gop.society.utils.Pageable;
 import com.gop.society.utils.UserCreationRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.util.List;
 import java.util.Map;
 
 
@@ -29,6 +33,8 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private AccountService accountService;
 
     @PostConstruct
     private void init() {
@@ -58,6 +64,16 @@ public class UserController {
             CustomNotAuthorizedException {
         log.debug("get({})", id);
         return userService.get(id);
+    }
+
+    @RequestMapping(value = "/{id}/accounts", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Account> getAccounts(
+            @PathVariable("id") final String id)
+            throws CustomNotFoundException,
+            CustomNotAuthorizedException {
+        log.debug("getAccounts({})", id);
+        return accountService.findAllForOwner(id, AccountType.USER);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
