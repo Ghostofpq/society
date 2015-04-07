@@ -38,6 +38,7 @@ import java.nio.charset.Charset;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -184,6 +185,17 @@ public class GlobalIT {
 
         final Account account = accountRepository.findByOwnerIdAndCurrencyIdAndAccountType(organisation.getId(), currency.getId(), AccountType.ORGANISATION);
         assertTrue(account != null);
+
+        mockMvc.perform(get("/api/organisations/" + organisation.getId() + "/accounts"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].balance", is(account.getBalance().intValue())))
+                .andExpect(jsonPath("$[0].accountType", is("ORGANISATION")))
+                .andExpect(jsonPath("$[0].ownerId", is(account.getOwnerId())))
+                .andExpect(jsonPath("$[0].currencyId", is(account.getCurrencyId())))
+                .andExpect(jsonPath("$[0].creationTs", is(account.getCreationTs())))
+                .andExpect(jsonPath("$[0].updateTs", is(account.getUpdateTs())));
     }
 
 
