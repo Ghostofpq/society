@@ -1,11 +1,11 @@
-package com.gop.society.test.controllers;
+package controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gop.society.controllers.UserController;
 import com.gop.society.models.User;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.security.CustomAuthenticationProvider;
-import com.gop.society.test.config.MockedRepositoriesConfig;
+import config.MockedRepositoriesConfig;
 import com.gop.society.utils.UserCreationRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;

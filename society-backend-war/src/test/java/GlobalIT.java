@@ -1,5 +1,3 @@
-package com.gop.society.test;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gop.society.models.Account;
 import com.gop.society.models.Currency;
@@ -10,7 +8,7 @@ import com.gop.society.repositories.CurrencyRepository;
 import com.gop.society.repositories.OrganisationRepository;
 import com.gop.society.repositories.UserRepository;
 import com.gop.society.security.CustomAuthenticationProvider;
-import com.gop.society.test.config.MockedSecurityConfig;
+import config.MockedSecurityConfig;
 import com.gop.society.utils.AccountType;
 import com.gop.society.utils.CurrencyCreationRequest;
 import com.gop.society.utils.OrganisationCreationRequest;

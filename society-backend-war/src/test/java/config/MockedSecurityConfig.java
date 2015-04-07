@@ -1,18 +1,12 @@
-package com.gop.society.test.config;
+package config;
 
-import com.google.common.base.Charsets;
 import com.gop.society.security.CustomAuthenticationProvider;
 import org.mockito.Mockito;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Created by VMPX4526 on 25/02/2015.
